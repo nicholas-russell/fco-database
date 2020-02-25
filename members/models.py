@@ -21,6 +21,12 @@ class Member(models.Model):
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
+    def name(self):
+        return self.user.first_name + " " + self.user.last_name
+
+    def email(self):
+        return self.user.email
+
 
 class Shift(models.Model):
     member_id = models.ForeignKey(Member, on_delete=models.DO_NOTHING)
