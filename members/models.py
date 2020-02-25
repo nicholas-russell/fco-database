@@ -20,6 +20,7 @@ class Member(models.Model):
     concession = models.BooleanField(default=False)
     concession_proof = models.ImageField(upload_to=RandomFileName('concession_images'), blank=True, null=True)
     paid = models.BooleanField(default=False)
+    mailing_list = models.BooleanField(default=True)
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
