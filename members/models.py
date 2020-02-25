@@ -23,9 +23,9 @@ class Member(models.Model):
 
 
 class Shift(models.Model):
-    member = models.ForeignKey(Member, on_delete=models.DO_NOTHING)
+    member_id = models.ForeignKey(Member, on_delete=models.DO_NOTHING)
     date = models.DateField()
-    hours = models.DecimalField(decimal_places=1)
+    hours = models.DecimalField(decimal_places=1, max_digits=3)
     entered_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
