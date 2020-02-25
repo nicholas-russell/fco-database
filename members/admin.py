@@ -19,7 +19,7 @@ class MemberAdmin(admin.ModelAdmin):
 
 @admin.register(models.Shift)
 class ShiftAdmin(admin.ModelAdmin):
-    list_display = ("member_id",
+    list_display = ("member",
                     "date",
                     "hours",
                     "entered_by")

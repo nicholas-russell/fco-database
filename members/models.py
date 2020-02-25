@@ -27,9 +27,12 @@ class Member(models.Model):
     def email(self):
         return self.user.email
 
+    def __str__(self):
+        return self.user.email
+
 
 class Shift(models.Model):
-    member_id = models.ForeignKey(Member, on_delete=models.DO_NOTHING)
+    member = models.ForeignKey(Member, on_delete=models.DO_NOTHING)
     date = models.DateField()
     hours = models.DecimalField(decimal_places=1, max_digits=3)
     entered_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
