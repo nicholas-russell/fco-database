@@ -9,6 +9,7 @@ class Member(models.Model):
         ("i", "Individual"),
         ("c", "Couple"),
         ("h", "Household"),
+        ("p", "Philanthropic")
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -18,6 +19,7 @@ class Member(models.Model):
     membership_approved = models.BooleanField(default=False)
     concession = models.BooleanField(default=False)
     concession_proof = models.ImageField(upload_to=RandomFileName('concession_images'), blank=True, null=True)
+    paid = models.BooleanField(default=False)
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
