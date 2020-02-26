@@ -1,0 +1,70 @@
+{% extends 'includes/base.html' %}
+
+{% load i18n %}
+{% load account %}
+{% load widget_tweaks %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-sm-4 offset-sm-4">
+        <div class="card">
+            <div class="card-header">
+                {% trans "Login" %}
+            </div>
+            <div class="card-body">
+                <p>{% blocktrans %}If you have not created an account yet, then please
+                <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+                <form method="POST" action="{% url 'account_login' %}">
+                    {% csrf_token %}
+                    {% for hidden_field in form.hidden_fields %}
+                        {{ hidden_field }}
+                    {% endfor %}
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger" role="alert">
+                          {% for error in form.non_field_errors %}
+                              {{ error }}
+                          {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% for field in form.visible_fields %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {% if form.is_bound %}
+                            {% if field.errors %}
+                                {% render_field field class="form-control" %}
+                                {% for error in field.errors %}
+                                    <div class="invalid-feedback">
+                                        {{ error }}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                {% render_field field class="form-control" %}
+                            {% endif %}
+                            {% else %}
+                                {% render_field field class="form-control" %}
+                            {% endif %}
+
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    {% if redirect_field_value %}
+                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                    {% endif %}
+
+                    <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+                    <a href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
