@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'fco_database',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount'
+    'allauth.socialaccount',
+    'widget_tweaks'
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -150,3 +151,4 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_USERNAME_REQUIRED = False
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+ACCOUNT_SESSION_REMEMBER = True
