@@ -16,8 +16,11 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include
+from members import views as members_views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url('', include('allauth.urls')),
+    path('', members_views.index)
 ]
