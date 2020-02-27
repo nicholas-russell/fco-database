@@ -22,5 +22,6 @@ from members import views as members_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     url('', include('allauth.urls')),
-    path('', members_views.index)
+    path('', members_views.index),
+    path('member/new/', members_views.NewMember.as_view(), name='new_member')
 ]

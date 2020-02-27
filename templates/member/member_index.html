@@ -1,0 +1,23 @@
+{% extends 'account/base.html' %}
+
+{% load i18n %}
+{% load widget_tweaks %}
+
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Membership Details</h3>
+                    <ul>
+                        <li>Email: {{ member.user_email }}</li>
+                        <li>Type: {{ member.membership_type }}</li>
+                        <li>Expiry: {{ member.working_expiry }}</li>
+                        <li>Concession: {{ member.concession }}</li>
+                        <li>Paid: {{ member.paid }}</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
