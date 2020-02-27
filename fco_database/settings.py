@@ -152,3 +152,6 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_USERNAME_REQUIRED = False
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_FORMS = {
+    'signup': 'members.forms.CustomSignupForm'
+}
