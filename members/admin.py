@@ -5,6 +5,7 @@ admin.site.site_header = "The Food Co-Op Shop & Cafe"
 admin.site.title = "The Food Co-Op Shop & Cafe"
 admin.site.index_title = "Membership administration"
 
+
 @admin.register(models.Member)
 class MemberAdmin(admin.ModelAdmin):
     list_display = ("id",
@@ -25,4 +26,8 @@ class ShiftAdmin(admin.ModelAdmin):
                     "entered_by")
     empty_value_display = 'unknown'
 
+
+@admin.register(models.VolunteerOption)
+class VolunteerOptionAdmin(admin.ModelAdmin):
+    list_display = ("code", "name", "info")
 

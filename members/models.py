@@ -69,3 +69,9 @@ class Shift(models.Model):
     entered_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
+
+
+class VolunteerOption(models.Model):
+    code = models.CharField(max_length=3)
+    name = models.CharField(max_length=32)
+    info = models.TextField(blank=True, null=True)
