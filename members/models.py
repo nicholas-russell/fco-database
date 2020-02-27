@@ -11,6 +11,12 @@ class Member(models.Model):
         ("h", "Household"),
         ("p", "Philanthropic")
     ]
+    concession_choices = [
+        ("s", "Student"),
+        ("p", "Pension"),
+        ("h", "Healthcare"),
+        ("o", "Other")
+    ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     membership_type = models.CharField(max_length=1, choices=membership_choices, default="i")
@@ -19,6 +25,10 @@ class Member(models.Model):
     membership_approved = models.BooleanField(default=False)
     concession = models.BooleanField(default=False)
     concession_proof = models.ImageField(upload_to=RandomFileName('concession_images'), blank=True, null=True)
+    concession_type = models.CharField(max_length=1, choices=membership_choices, default="i")
+    suburb = models.CharField(max_length=32, null=True, blank=True)
+    postcode = models.CharField(max_length=4, null=True, blank=True)
+    phone_number = models.CharField(max_length=9, null=True, blank=True)
     paid = models.BooleanField(default=False)
     mailing_list = models.BooleanField(default=True)
     ts_entered = models.DateTimeField(auto_now_add=True)
