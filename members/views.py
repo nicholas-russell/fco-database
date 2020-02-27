@@ -1,4 +1,4 @@
-from django.shortcuts import render, reverse
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.http import response
 from django.views import generic
@@ -11,9 +11,9 @@ def index(request):
         member = models.Member.objects.get(user=request.user)
     except models.Member.DoesNotExist:
         member = None
-    print(member)
+
     if member is None:
-        return response.HttpResponseRedirect(reverse('new_member'))
+        return redirect('new_member')
     else:
         context = {
             'user_email': member.user.email,
