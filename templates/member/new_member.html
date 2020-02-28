@@ -11,7 +11,7 @@
 {% endblock %}
 {% block content %}
     <div class="row">
-        <div class="col-sm-6 offset-sm-3">
+        <div class="col-lg-8 offset-lg-2">
             <div class="card">
                 <div class="card-body">
                     <div class="row">
@@ -95,21 +95,26 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col">
                                                 <div class="form-group row">
-                                                    <label class="col-form-label col-sm-5" for="post_code">Post
+                                                    <label class="col-form-label col-sm-4" for="post_code">Post
                                                         Code:</label>
-                                                    <div class="col-sm-7">
+                                                    <div class="col-sm-8">
                                                         <input type="text" class="form-control" name="post_code"
                                                                id="post_code"/>
                                                     </div>
                                                 </div>
+                                                <div class="form-group row">
+                                                    <label class="col-form-label col-sm-4" for="suburb">Suburb:</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" name="suburb"
+                                                               id="suburb"/>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div class="col-md-6">
-                                                <select class="form-control" required name="suburb" id="suburb">
-                                                    <option value="" selected>Please enter a postcode</option>
-                                                </select>
-                                            </div>
+                                            {% comment %}<div class="col-md-6">
+                                                <select placeholder="Please select a suburb" name="suburb" id="suburb"></select>
+                                            </div>{% endcomment %}
                                         </div>
                                         <div class="row">
                                             <div class="col">
@@ -147,5 +152,28 @@
     <script src="{% static "js/selectize.min.js" %}"></script>
     <script>
         $('#volunteer_preferences').selectize();
+        {% comment %}var suburb_selectize = $('#suburb').selectize({
+            maxItems: 1,
+            closeAfterSelect: true,
+        });
+        $('#post_code').on('input', (e) => {
+            suburb_selectize[0].selectize.clearOptions();
+            suburb_selectize[0].selectize.clear(true);
+            let post_code = $(e.target).val();
+            if (post_code.length === 4 && post_code?.match(/[0-9]{4}/g)) {
+                console.log(post_code)
+                $.ajax({
+                    url: "http://v0.postcodeapi.com.au/suburbs/" + post_code + ".json",
+                    accepts: "application/json",
+                    type: "GET",
+                    beforeSend: function() {
+                        console.log("sending")
+                    },
+                    success: function(res) {
+                        console.log(res);
+                    }
+                });
+            }
+        });{% endcomment %}
     </script>
 {% endblock %}
