@@ -38,6 +38,10 @@ class NewMember(LoginRequiredMixin, generic.View):
     def post(self, request):
         post_data = request.POST
         html = ""
+        print(post_data.getlist('volunteer_preferences[]'))
         for key, value in list(post_data.items()):
-            html += "<p><strong>" + key + ":</strong> " + value + "</p>"
+            if key == "volunteer_preferences[]":
+                html += "<p><strong>" + key + ":</strong> " + ', '.join(post_data.getlist(key)) + "</p>"
+            else:
+                html += "<p><strong>" + key + ":</strong> " + value + "</p>"
         return response.HttpResponse(html)
