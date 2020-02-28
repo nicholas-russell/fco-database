@@ -34,8 +34,16 @@ class Member(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # membership_type = models.CharField(max_length=1, choices=membership_choices, default="i")
     membership_type = EnumChoiceField(MembershipTypes)
+    concession = models.BooleanField(default=False)
+    concession_proof = models.ImageField(upload_to=RandomFileName('concession_images'), blank=True, null=True)
+    concession_type = EnumChoiceField(ConcessionTypes, null=True, blank=True)
+    suburb = models.CharField(max_length=32, null=True, blank=True)
+    postcode = models.CharField(max_length=4, null=True, blank=True)
+    phone_number = models.CharField(max_length=9, null=True, blank=True)
+    mailing_list = models.BooleanField(default=True)
+    volunteer_preferences = ArrayField(models.CharField(max_length=3), null=True, blank=True)
+
     membership_expiry = models.DateField(null=True, blank=True)
     working_expiry = models.DateField(null=True, blank=True)
     membership_approved = models.BooleanField(default=False)
