@@ -1,10 +1,151 @@
 {% extends 'includes/base.html' %}
 
 {% load i18n %}
+{% load static %}
 {% load widget_tweaks %}
 
 {% block head_title %}{% trans "New Member" %}{% endblock %}
+{% block meta %}
+    <link rel="stylesheet" href="{% static "css/selectize.bootstrap4.css" %}" type="text/css"/>
 
+{% endblock %}
 {% block content %}
+    <div class="row">
+        <div class="col-sm-6 offset-sm-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h3>Application for membership</h3>
+                            <p>Potentially some text here explaining process</p>
+                            <form method="POST" action="{% url 'new_member' %}">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col">
+                                        <h5>Membership details</h5>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="membership_type_radio1" name="membership_type"
+                                                   class="custom-control-input" value="i" checked="checked">
+                                            <label class="custom-control-label" for="membership_type_radio1">Individual
+                                                -
+                                                $25/year</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="membership_type_radio2" name="membership_type"
+                                                   class="custom-control-input" value="c">
+                                            <label class="custom-control-label" for="membership_type_radio2">Couple -
+                                                $40/year</label>
+                                        </div>
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" id="membership_type_radio3" name="membership_type"
+                                                   class="custom-control-input" value="h">
+                                            <label class="custom-control-label" for="membership_type_radio3">Household
+                                                (3+
+                                                people) - $50/year</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="customCheck1">
+                                            <label class="custom-control-label" for="customCheck1">I have a concession
+                                                card</label>
+                                        </div>
+                                        <div class="form-group row mt-1">
+                                            <label class="col-form-label col-sm-4" for="concession_type">Concession
+                                                type:</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" name="concession_type"
+                                                        id="concession_type">
+                                                    <option>Student</option>
+                                                    <option>Pension</option>
+                                                    <option>Healthcare</option>
+                                                    <option>Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <h5>Volunteering information</h5>
+                                        <label for="volunteer_preferences">Select any volunteering you'd be willing to do below</label>
+                                        <select name="volunteer_preferences[]" multiple placeholder="Select volunteering options" id="volunteer_preferences">
+                                            {% for opt in volunteer_options %}
+                                                <option value="{{ opt.code }}">{{ opt.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <h5>Contact details</h5>
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-sm-4" for="phone_number">Phone
+                                                number:</label>
+                                            <div class="col-sm-8">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">+61</span>
+                                                    </div>
+                                                    <input type="text" id="phone_number" name="phone_number"
+                                                           placeholder="444 444 444" class="form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group row">
+                                                    <label class="col-form-label col-sm-5" for="post_code">Post
+                                                        Code:</label>
+                                                    <div class="col-sm-7">
+                                                        <input type="text" class="form-control" name="post_code"
+                                                               id="post_code"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <select class="form-control" required name="suburb" id="suburb">
+                                                    <option value="" selected>Please enter a postcode</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                           id="mailing_list">
+                                                    <label class="custom-control-label" for="mailing_list">Please tick
+                                                        if you <strong>do not</strong> want to be included in our
+                                                        mailing list.
+                                                        The Food Co-operative is reliant on volunteers to be able to
+                                                        give greater benefits back to our members and community. If you
+                                                        opt out of our mailing list, you’ll miss out on emails regarding
+                                                        volunteering opportunities.
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col d-flex justify-content-center">
+                                        <button class="btn btn-success" type="submit">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
 
+{% block extra_body %}
+    <script src="{% static "js/selectize.min.js" %}"></script>
+    <script>
+        $('#volunteer_preferences').selectize();
+    </script>
 {% endblock %}

@@ -29,7 +29,11 @@ def index(request):
 
 class NewMember(LoginRequiredMixin, generic.View):
     def get(self, request):
-        return response.HttpResponse("this is a get")
+        volunteer_options = models.VolunteerOption.objects.all()
+        data = {
+            'volunteer_options': volunteer_options
+        }
+        return render(request, "member/new_member.html", data)
 
     def post(self, request):
         return response.HttpResponse("this is a post")
