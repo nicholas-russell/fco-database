@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import response
 from django.views import generic
 from . import models
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 @login_required
@@ -26,7 +27,7 @@ def index(request):
         return render(request, "member/member_index.html", {'member': context})
 
 
-class NewMember(generic.View):
+class NewMember(LoginRequiredMixin, generic.View):
     def get(self, request):
         return response.HttpResponse("this is a get")
 
