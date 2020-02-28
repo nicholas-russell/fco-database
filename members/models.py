@@ -4,40 +4,39 @@ from fco_database.lib import RandomFileName
 from enum import Enum
 from django.contrib.postgres.fields import ArrayField
 from django_enum_choices.fields import EnumChoiceField
-# Create your models here.
+
+
+class MembershipType(models.Model):
+    name = models.CharField(max_length=32)
+    code = models.CharField(max_length=1)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    concession_price = models.DecimalField(max_digits=5, decimal_places=2)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Member(models.Model):
-    class MembershipTypes(Enum):
-        INDIVIDUAL = "Individual"
-        COUPLE = "Couple"
-        HOUSEHOLD = "Household"
-        PHIL = "Philanthropic"
 
-    class ConcessionTypes(Enum):
-        STUDENT = "Student"
-        PENSION = "Pension"
-        HEALTHCARE = "Healthcare"
-        OTHER = "Other"
-
-    membership_choices = [
-        (MembershipTypes.INDIVIDUAL.value, "Individual"),
-        (MembershipTypes.COUPLE.value, "Couple"),
-        (MembershipTypes.HOUSEHOLD.value, "Household"),
-        (MembershipTypes.PHIL.value, "Philanthropic")
-    ]
+    CONCESSION_CODES = {
+        "STUDENT": "s",
+        "PENSION": "p",
+        "HEALTHCARE": "h",
+        "OTHER": "o"
+    }
     concession_choices = [
-        (ConcessionTypes.STUDENT.value, "Student"),
-        (ConcessionTypes.PENSION.value, "Pension"),
-        (ConcessionTypes.HEALTHCARE.value, "Healthcare"),
-        (ConcessionTypes.OTHER.value, "Other")
+        (CONCESSION_CODES["STUDENT"], "Student"),
+        (CONCESSION_CODES["PENSION"], "Pension"),
+        (CONCESSION_CODES["HEALTHCARE"], "Healthcare"),
+        (CONCESSION_CODES["OTHER"], "Other")
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    membership_type = EnumChoiceField(MembershipTypes)
+    membership_type = models.ForeignKey(MembershipType, on_delete=models.SET("OLD_MEMBERSHIP"))
     concession = models.BooleanField(default=False)
     concession_proof = models.ImageField(upload_to=RandomFileName('concession_images'), blank=True, null=True)
-    concession_type = EnumChoiceField(ConcessionTypes, null=True, blank=True)
+    concession_type = models.CharField(max_length=1, choices=concession_choices, null=True, blank=True)
     suburb = models.CharField(max_length=32, null=True, blank=True)
     postcode = models.CharField(max_length=4, null=True, blank=True)
     phone_number = models.CharField(max_length=9, null=True, blank=True)
@@ -75,9 +74,3 @@ class VolunteerOption(models.Model):
     name = models.CharField(max_length=32)
     info = models.TextField(blank=True, null=True)
 
-
-class MembershipPrice(models.Model):
-    name = models.CharField(max_length=32)
-    price = models.DecimalField(max_digits=5, decimal_places=2)
-    concession_price = models.DecimalField(max_digits=5, decimal_places=2)
-    active = models.BooleanField(default=True)
