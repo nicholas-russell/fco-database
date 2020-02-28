@@ -36,4 +36,8 @@ class NewMember(LoginRequiredMixin, generic.View):
         return render(request, "member/new_member.html", data)
 
     def post(self, request):
-        return response.HttpResponse("this is a post")
+        post_data = request.POST
+        html = ""
+        for key, value in list(post_data.items()):
+            html += "<p><strong>" + key + ":</strong> " + value + "</p>"
+        return response.HttpResponse(html)
