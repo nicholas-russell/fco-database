@@ -1,9 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from fco_database.lib import RandomFileName
-from enum import Enum
 from django.contrib.postgres.fields import ArrayField
-from django_enum_choices.fields import EnumChoiceField
 
 
 class MembershipType(models.Model):
@@ -17,7 +15,7 @@ class MembershipType(models.Model):
         return self.name
 
 
-class Member(models.Model):
+class Membership(models.Model):
 
     CONCESSION_CODES = {
         "STUDENT": "s",
@@ -34,30 +32,27 @@ class Member(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     membership_type = models.ForeignKey(MembershipType, on_delete=models.SET("OLD_MEMBERSHIP"))
+    membership_expiry = models.DateField(null=True, blank=True)
+    working_expiry = models.DateField(null=True, blank=True)
     concession = models.BooleanField(default=False)
     concession_proof = models.ImageField(upload_to=RandomFileName('concession_images'), blank=True, null=True)
     concession_type = models.CharField(max_length=1, choices=concession_choices, null=True, blank=True)
-    suburb = models.CharField(max_length=32, null=True, blank=True)
-    postcode = models.CharField(max_length=4, null=True, blank=True)
-    phone_number = models.CharField(max_length=9, null=True, blank=True)
-    mailing_list = models.BooleanField(default=True)
-    volunteer_preferences = ArrayField(models.CharField(max_length=3), null=True, blank=True)
-
-    membership_expiry = models.DateField(null=True, blank=True)
-    working_expiry = models.DateField(null=True, blank=True)
-    membership_approved = models.BooleanField(default=False)
     paid = models.BooleanField(default=False)
+    membership_active = models.BooleanField(default=False)
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
-    def name(self):
-        return self.user.first_name + " " + self.user.last_name
 
-    def email(self):
-        return self.user.email
-
-    def __str__(self):
-        return self.user.email
+class Member(models.Model):
+    membership = models.ForeignKey(Membership, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=35)
+    last_name = models.CharField(max_length=35)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=9, null=True, blank=True)
+    postcode = models.CharField(max_length=4, null=True, blank=True)
+    suburb = models.CharField(max_length=32, null=True, blank=True)
+    mailing_list = models.BooleanField(default=True)
+    volunteer_preferences = ArrayField(models.CharField(max_length=3), null=True, blank=True)
 
 
 class Shift(models.Model):

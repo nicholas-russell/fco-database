@@ -8,15 +8,11 @@ admin.site.index_title = "Membership administration"
 
 @admin.register(models.Member)
 class MemberAdmin(admin.ModelAdmin):
-    list_display = ("id",
-                    "name",
-                    "email",
-                    "membership_type",
-                    "membership_expiry",
-                    "working_expiry",
-                    "concession")
-    empty_value_display = 'unknown'
+    list_display = ("membership", "first_name", "last_name", "email", "phone_number")
 
+@admin.register(models.Membership)
+class MembershipAdmin(admin.ModelAdmin):
+    list_display = ("user", "membership_type", "concession", "membership_expiry", "working_expiry", "paid")
 
 @admin.register(models.Shift)
 class ShiftAdmin(admin.ModelAdmin):
