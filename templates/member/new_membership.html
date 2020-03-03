@@ -22,27 +22,18 @@
                                 {% csrf_token %}
                                 <div class="row">
                                     <div class="col">
-                                        <h5>Membership details</h5>
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" id="membership_type_radio1" name="membership_type"
-                                                   class="custom-control-input" value="i" checked="checked">
-                                            <label class="custom-control-label" for="membership_type_radio1">Individual
-                                                -
-                                                $25/year</label>
-                                        </div>
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" id="membership_type_radio2" name="membership_type"
-                                                   class="custom-control-input" value="c">
-                                            <label class="custom-control-label" for="membership_type_radio2">Couple -
-                                                $40/year</label>
-                                        </div>
-                                        <div class="custom-control custom-radio">
-                                            <input type="radio" id="membership_type_radio3" name="membership_type"
-                                                   class="custom-control-input" value="h">
-                                            <label class="custom-control-label" for="membership_type_radio3">Household
-                                                (3+
-                                                people) - $50/year</label>
-                                        </div>
+                                        <h5>Membership type:</h5>
+                                        {% for membership in membership_types %}
+                                            <div class="custom-control custom-radio">
+                                                <input type="radio" id="membership_type_radio_{{ membership.code }}" name="membership_type"
+                                                       class="custom-control-input" value="{{ membership.code }}">
+                                                <label class="custom-control-label" for="membership_type_radio_{{ membership.code }}">
+                                                    {{ membership.name }} -
+                                                    <span data-pricefor="full">${{ membership.price }}/year</span>
+                                                    <span data-pricefor="concession" class="d-none">${{ membership.concession_price }}/year</span>
+                                                </label>
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
                                 <div class="row mt-3">
@@ -52,16 +43,16 @@
                                         <label class="custom-control-label" for="concession">I have a concession
                                             card</label>
                                     </div>
-                                    <div class="form-group row mt-1">
+                                    <div class="form-group row mt-1 d-none" id="concession_dropdown">
                                         <label class="col-form-label col-sm-4" for="concession_type">Concession
                                             type:</label>
                                         <div class="col-sm-8">
                                             <select class="form-control" name="concession_type"
                                                     id="concession_type">
-                                                <option>Student</option>
-                                                <option>Pension</option>
-                                                <option>Healthcare</option>
-                                                <option>Other</option>
+                                                <option value="s">Student</option>
+                                                <option value="p">Pension</option>
+                                                <option value="h">Healthcare</option>
+                                                <option value="o">Other</option>
                                             </select>
                                         </div>
                                     </div>
@@ -82,31 +73,18 @@
 {% endblock %}
 
 {% block extra_body %}
-    <script src="{% static "js/selectize.min.js" %}"></script>
     <script>
-        $('#volunteer_preferences').selectize();
-        {% comment %}var suburb_selectize = $('#suburb').selectize({
-            maxItems: 1,
-            closeAfterSelect: true,
+        $('#membership_type_radio_i').prop("checked", true);
+        $('#concession').change(function() {
+           if(this.checked) {
+               $('#concession_dropdown').removeClass("d-none");
+               $('span[data-pricefor=full]').addClass("d-none");
+               $('span[data-pricefor=concession]').removeClass("d-none");
+           } else {
+               $('#concession_dropdown').addClass("d-none");
+               $('span[data-pricefor=full]').removeClass("d-none");
+               $('span[data-pricefor=concession]').addClass("d-none");
+           }
         });
-        $('#post_code').on('input', (e) => {
-            suburb_selectize[0].selectize.clearOptions();
-            suburb_selectize[0].selectize.clear(true);
-            let post_code = $(e.target).val();
-            if (post_code.length === 4 && post_code?.match(/[0-9]{4}/g)) {
-                console.log(post_code)
-                $.ajax({
-                    url: "http://v0.postcodeapi.com.au/suburbs/" + post_code + ".json",
-                    accepts: "application/json",
-                    type: "GET",
-                    beforeSend: function() {
-                        console.log("sending")
-                    },
-                    success: function(res) {
-                        console.log(res);
-                    }
-                });
-            }
-        });{% endcomment %}
     </script>
 {% endblock %}
