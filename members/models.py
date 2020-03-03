@@ -14,9 +14,11 @@ class MembershipType(models.Model):
     def __str__(self):
         return self.name
 
+    def url_name(self):
+        return self.name.lower()
+
 
 class Membership(models.Model):
-
     CONCESSION_CODES = {
         "STUDENT": "s",
         "PENSION": "p",
@@ -38,7 +40,7 @@ class Membership(models.Model):
     concession_proof = models.ImageField(upload_to=RandomFileName('concession_images'), blank=True, null=True)
     concession_type = models.CharField(max_length=1, choices=concession_choices, null=True, blank=True)
     paid = models.BooleanField(default=False)
-    membership_active = models.BooleanField(default=False)
+    membership_active = models.BooleanField(default=True)
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
@@ -54,6 +56,9 @@ class Member(models.Model):
     mailing_list = models.BooleanField(default=True)
     volunteer_preferences = ArrayField(models.CharField(max_length=3), null=True, blank=True)
 
+    def __str__(self):
+        return "[{}] {} {}".format(self.id, self.first_name, self.last_name)
+
 
 class Shift(models.Model):
     member = models.ForeignKey(Member, on_delete=models.DO_NOTHING)
@@ -68,4 +73,3 @@ class VolunteerOption(models.Model):
     code = models.CharField(max_length=3)
     name = models.CharField(max_length=32)
     info = models.TextField(blank=True, null=True)
-
