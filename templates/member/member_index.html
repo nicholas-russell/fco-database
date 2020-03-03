@@ -15,6 +15,9 @@
                         <li>Concession: {{ membership.concession }}</li>
                         <li>Paid: {{ membership.paid }}</li>
                     </ul>
+                    {% for member in membership.members %}
+                        <p>{{ member.first_name }} {{ member.last_name }} {{ member.email }}</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
