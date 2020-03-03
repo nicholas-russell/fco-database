@@ -1,0 +1,132 @@
+{% extends 'includes/base.html' %}
+
+{% load i18n %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block head_title %}{% trans "New Member" %}{% endblock %}
+{% block meta %}
+    <link rel="stylesheet" href="{% static "css/selectize.bootstrap4.css" %}" type="text/css"/>
+
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <h3>Application for membership</h3>
+                            <p>Potentially some text here explaining process</p>
+                            <form method="POST" action="{% url 'new_membership_details' membership_type="household" %}">
+                                {% csrf_token %}
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <h5>Volunteering information</h5>
+                                        <label for="volunteer_preferences">Select any volunteering you'd be willing to do below</label>
+                                        <select name="volunteer_preferences[]" multiple placeholder="Select volunteering options" id="volunteer_preferences">
+                                            {% for opt in volunteer_options %}
+                                                <option value="{{ opt.code }}">{{ opt.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col">
+                                        <h5>Contact details</h5>
+                                        <div class="form-group row">
+                                            <label class="col-form-label col-sm-4" for="phone_number">Phone
+                                                number:</label>
+                                            <div class="col-sm-8">
+                                                <div class="input-group">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">+61</span>
+                                                    </div>
+                                                    <input type="text" id="phone_number" name="phone_number"
+                                                           placeholder="444 444 444" class="form-control"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-group row">
+                                                    <label class="col-form-label col-sm-4" for="post_code">Post
+                                                        Code:</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" name="post_code"
+                                                               id="post_code"/>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group row">
+                                                    <label class="col-form-label col-sm-4" for="suburb">Suburb:</label>
+                                                    <div class="col-sm-8">
+                                                        <input type="text" class="form-control" name="suburb"
+                                                               id="suburb"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% comment %}<div class="col-md-6">
+                                                <select placeholder="Please select a suburb" name="suburb" id="suburb"></select>
+                                            </div>{% endcomment %}
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input"
+                                                           id="mailing_list">
+                                                    <label class="custom-control-label" for="mailing_list">Please tick
+                                                        if you <strong>do not</strong> want to be included in our
+                                                        mailing list.
+                                                        The Food Co-operative is reliant on volunteers to be able to
+                                                        give greater benefits back to our members and community. If you
+                                                        opt out of our mailing list, you’ll miss out on emails regarding
+                                                        volunteering opportunities.
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mt-3">
+                                    <div class="col d-flex justify-content-center">
+                                        <button class="btn btn-success" type="submit">Submit</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_body %}
+    <script src="{% static "js/selectize.min.js" %}"></script>
+    <script>
+        $('#volunteer_preferences').selectize();
+        {% comment %}var suburb_selectize = $('#suburb').selectize({
+            maxItems: 1,
+            closeAfterSelect: true,
+        });
+        $('#post_code').on('input', (e) => {
+            suburb_selectize[0].selectize.clearOptions();
+            suburb_selectize[0].selectize.clear(true);
+            let post_code = $(e.target).val();
+            if (post_code.length === 4 && post_code?.match(/[0-9]{4}/g)) {
+                console.log(post_code)
+                $.ajax({
+                    url: "http://v0.postcodeapi.com.au/suburbs/" + post_code + ".json",
+                    accepts: "application/json",
+                    type: "GET",
+                    beforeSend: function() {
+                        console.log("sending")
+                    },
+                    success: function(res) {
+                        console.log(res);
+                    }
+                });
+            }
+        });{% endcomment %}
+    </script>
+{% endblock %}
