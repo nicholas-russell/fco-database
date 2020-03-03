@@ -9,39 +9,50 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 @login_required
 def index(request):
     try:
-        member = models.Member.objects.get(user=request.user)
-    except models.Member.DoesNotExist:
-        member = None
+        membership = models.Membership.objects.get(user=request.user)
+    except models.Membership.DoesNotExist:
+        membership = None
 
-    if member is None:
-        return redirect('new_member')
+    if membership is None:
+        return redirect('new_membership')
     else:
         context = {
-            'user_email': member.user.email,
-            'membership_type': member.get_membership_type_display(),
-            'membership_expiry': member.membership_expiry,
-            'working_expiry': member.working_expiry,
-            'concession': member.concession,
-            'paid': member.paid
+            'membership_type': membership.get_membership_type_display(),
+            'membership_expiry': membership.membership_expiry,
+            'working_expiry': membership.working_expiry,
+            'concession': membership.concession,
+            'paid': membership.paid
         }
-        return render(request, "member/member_index.html", {'member': context})
+        return render(request, "member/member_index.html", {'membership': context})
 
 
-class NewMember(LoginRequiredMixin, generic.View):
-    def get(self, request):
+class NewMembershipDetails(LoginRequiredMixin, generic.View):
+    def get(self, request, membership_type):
         volunteer_options = models.VolunteerOption.objects.all()
         data = {
             'volunteer_options': volunteer_options
         }
-        return render(request, "member/new_member.html", data)
+        return response.HttpResponse(membership_type)
 
-    def post(self, request):
+    def post(self, request, membership_type):
         post_data = request.POST
         html = ""
-        print(post_data.getlist('volunteer_preferences[]'))
+        html += "Membership type: " + membership_type
         for key, value in list(post_data.items()):
             if key == "volunteer_preferences[]":
                 html += "<p><strong>" + key + ":</strong> " + ', '.join(post_data.getlist(key)) + "</p>"
             else:
                 html += "<p><strong>" + key + ":</strong> " + value + "</p>"
+        return response.HttpResponse(html)
+
+
+class NewMembership(LoginRequiredMixin, generic.View):
+    def get(self, request):
+        return render(request, "member/new_membership.html")
+
+    def post(self, request):
+        post_data = request.POST
+        html = ""
+        for key, value in list(post_data.items()):
+            html += "<p><strong>" + key + ":</strong> " + value + "</p>"
         return response.HttpResponse(html)
