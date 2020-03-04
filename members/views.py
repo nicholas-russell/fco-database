@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.db import IntegrityError
 import requests
 
+
 @login_required
 def index(request):
     try:
@@ -46,14 +47,22 @@ class NewMembershipDetails(LoginRequiredMixin, generic.View):
 
     def post(self, request, membership_type):
         post_data = request.POST
-        html = ""
-        html += "Membership type: " + membership_type
+        print("DEBUG")
+        print(membership_type)
         for key, value in list(post_data.items()):
             if key == "volunteer_preferences[]":
-                html += "<p><strong>" + key + ":</strong> " + ', '.join(post_data.getlist(key)) + "</p>"
+                print(key + ": " + ', '.join(post_data.getlist(key)))
             else:
-                html += "<p><strong>" + key + ":</strong> " + value + "</p>"
-        return response.HttpResponse(html)
+                print(key + ": " + value)
+
+        if membership_type is "individual":
+            pass
+        elif membership_type is "couple":
+            pass
+        elif membership_type is "household":
+            pass
+        else:
+            return response.HttpResponseBadRequest("Invalid membership type")
 
 
 class NewMembership(LoginRequiredMixin, generic.View):
