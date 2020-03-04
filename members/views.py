@@ -6,7 +6,7 @@ from . import models
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db import IntegrityError
-
+import requests
 
 @login_required
 def index(request):
@@ -100,3 +100,7 @@ class NewMembership(LoginRequiredMixin, generic.View):
 
         return redirect("new_membership_details", membership_type=new_membership.membership_type.url_name())
 
+
+def postcode(request, post_code):
+    data = requests.get("http://v0.postcodeapi.com.au/suburbs/{}.json".format(post_code))
+    return response.HttpResponse(data.content)
