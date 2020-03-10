@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import response
 from django.views import generic
 from . import models
+from .forms import is_membership_form_valid
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db import IntegrityError
@@ -62,7 +63,7 @@ class NewMembershipDetails(LoginRequiredMixin, generic.View):
         elif membership_type is "household":
             pass
         else:
-            return response.HttpResponseBadRequest("Invalid membership type")
+            raise response.Http404("Invalid membership type")
 
 
 class NewMembership(LoginRequiredMixin, generic.View):
@@ -86,7 +87,7 @@ class NewMembership(LoginRequiredMixin, generic.View):
         return render(request, "member/new_membership.html", context)
 
     def post(self, request):
-        if not models.Membership.is_form_valid(request):
+        if not is_membership_form_valid(request):
             messages.error(request, "There was an error in the form. Please try again")
             return redirect("new_membership")
 
