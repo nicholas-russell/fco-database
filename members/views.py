@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import response
 from django.views import generic
 from . import models
-from .forms import is_membership_form_valid
+from .forms import is_membership_form_valid, is_member_form_valid
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db import IntegrityError
@@ -56,11 +56,44 @@ class NewMembershipDetails(LoginRequiredMixin, generic.View):
             else:
                 print(key + ": " + value)
 
-        if membership_type is "individual":
+        if membership_type == "individual":
+            form = is_member_form_valid(request, membership_type)
+            if not form['valid']:
+                if form['redirect'] == 'login':
+                    return redirect('account_login')
+                elif form['redirect'] == 'membership':
+                    return redirect('new_membership')
+                else:
+                    volunteer_options = models.VolunteerOption.objects.all()
+                    context = {
+                        'volunteer_options': volunteer_options,
+                        'form': form
+                    }
+                    return render(request, "member/new_member_" + membership_type + ".html", context)
+            else:
+                new_member = models.Member()
+                new_member.membership = form['data']['membership']
+                new_member.first_name = request.user.first_name
+                new_member.last_name = request.user.last_name
+                new_member.email = request.user.email
+                new_member.phone_number = form['data']['phone_number']
+                new_member.postcode = form['data']['post_code']
+                new_member.suburb = form['data']['suburb']
+                new_member.mailing_list = form['data']['mailing_list']
+                new_member.volunteer_preferences = form['data']['volunteer_preferences']
+                try:
+                    new_member.save()
+                    return redirect('member_index')
+                except IntegrityError:
+                    messages.error(request, "There was an error in the form. Please try again")
+                    return redirect("new_membership_details", membership_type)
+                except RuntimeError:
+                    messages.error(request, "There was an error in the form. Please try again")
+                    return redirect("new_membership_details", membership_type)
+
+        elif membership_type == "couple":
             pass
-        elif membership_type is "couple":
-            pass
-        elif membership_type is "household":
+        elif membership_type == "household":
             pass
         else:
             raise response.Http404("Invalid membership type")
@@ -111,6 +144,7 @@ class NewMembership(LoginRequiredMixin, generic.View):
         return redirect("new_membership_details", membership_type=new_membership.membership_type.url_name())
 
 
+@login_required
 def postcode(request, post_code):
     data = requests.get("http://v0.postcodeapi.com.au/suburbs/{}.json".format(post_code))
     return response.HttpResponse(data.content, content_type='application/json')
