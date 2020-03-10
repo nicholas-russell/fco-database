@@ -112,4 +112,4 @@ class NewMembership(LoginRequiredMixin, generic.View):
 
 def postcode(request, post_code):
     data = requests.get("http://v0.postcodeapi.com.au/suburbs/{}.json".format(post_code))
-    return response.HttpResponse(data.content)
+    return response.HttpResponse(data.content, content_type='application/json')
