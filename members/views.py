@@ -8,7 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db import IntegrityError
 import requests
-
+from querystring_parser import parser
 
 @login_required
 def index(request):
@@ -47,16 +47,9 @@ class NewMembershipDetails(LoginRequiredMixin, generic.View):
         return render(request, "member/new_member_" + membership_type + ".html", context)
 
     def post(self, request, membership_type):
-        post_data = request.POST
-        print("DEBUG")
-        print(membership_type)
-        for key, value in list(post_data.items()):
-            if key == "volunteer_preferences[]":
-                print(key + ": " + ', '.join(post_data.getlist(key)))
-            else:
-                print(key + ": " + value)
-
         if membership_type == "individual":
+            post_dict = parser.parse(request.POST.urlencode())
+            return response.JsonResponse(post_dict, safe=True)
             form = is_member_form_valid(request, membership_type)
             if not form['valid']:
                 if form['redirect'] == 'login':
@@ -90,9 +83,9 @@ class NewMembershipDetails(LoginRequiredMixin, generic.View):
                 except RuntimeError:
                     messages.error(request, "There was an error in the form. Please try again")
                     return redirect("new_membership_details", membership_type)
-
         elif membership_type == "couple":
-            pass
+            post_dict = parser.parse(request.POST.urlencode())
+            return response.JsonResponse(post_dict, safe=True)
         elif membership_type == "household":
             pass
         else:
