@@ -106,13 +106,15 @@ class NewMembership(LoginRequiredMixin, generic.View):
             else:
                 messages.info(request, "Please finish your membership application before continuing")
                 return redirect("new_membership_details", membership_type=potential_membership.membership_type.url_name())
-        membership_types = models.MembershipType.objects.filter(active=True)
         context = {
-            'membership_types': membership_types
+            'membership_types': models.MembershipType.objects.filter(active=True),
+            'volunteer_options': models.VolunteerOption.objects.all()
         }
         return render(request, "member/new_membership.html", context)
 
     def post(self, request):
+        post_dict = parser.parse(request.POST.urlencode())
+        return response.JsonResponse(post_dict, safe=True)
         if not is_membership_form_valid(request):
             messages.error(request, "There was an error in the form. Please try again")
             return redirect("new_membership")

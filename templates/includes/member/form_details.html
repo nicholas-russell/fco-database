@@ -1,0 +1,101 @@
+<fieldset class="border px-3 pb-2 mb-3 {% if hide %}d-none{% endif %}" id="member_fieldset_{{ index }}">
+    <legend class="w-auto px-2">
+        Member {{ index }}
+        <small><a href="#member_collapse_{{ index }}" data-toggle="collapse"
+                  role="button">(show)</a></small>
+    </legend>
+    <div class="collapse" id="member_collapse_{{ index }}">
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="first_name_{{ index }}">First name</label>
+                        <input type="text" id="first_name_{{ index }}"
+                               name="member[{{ index }}][first_name]"
+                               class="form-control name {% if hide %}no_validate{% endif %}"
+                               {% if form.data.first_name %}value="{{ form.data.first_name }}"{% endif %}
+                        />
+                    </div>
+                    <div class="col-md-4 mb-3 pl-0">
+                        <label for="last_name_{{ index }}">Last name</label>
+                        <input type="text" id="last_name_{{ index }}"
+                               name="member[{{ index }}][last_name]"
+                               class="form-control name {% if hide %}no_validate{% endif %}"
+                               {% if form.data.first_name %}value="{{ form.data.first_name }}"{% endif %}
+                               
+                        />
+                    </div>
+                    <div class="col-md-4 mb-3 pl-0">
+                        <label for="phone_number_{{ index }}">Phone Number</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">+61</span>
+                            </div>
+                            <input type="text" id="phone_number_{{ index }}"
+                                   name="member[{{ index }}][phone_number]"
+                                   placeholder="444 444 444"
+                                   class="form-control phone_number {% if hide %}no_validate{% endif %}"
+                                   {% if form.data.phone_number %}value="{{ form.data.phone_number }}"{% endif %}
+                                   
+                            />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 mb-3">
+                        <label for="post_code_{{ index }}">Postcode</label>
+                        <input type="text"
+                               class="form-control post_code {% if hide %}no_validate{% endif %}"
+                               name="member[{{ index }}][post_code]"
+                               id="post_code_{{ index }}"
+                               {% if form.data.post_code %}value="{{ form.data.post_code }}"{% endif %}
+                               
+                        />
+                    </div>
+                    <div class="col-md-4 mb-3 pl-0">
+                        <label for="suburb_{{ index }}">Suburb</label>
+                        {% comment %}<input type="text" class="form-control suburb"
+                               name="member[{{ index }}][suburb]"  id="suburb_{{ index }}"/>{% endcomment %}
+                        <select class="form-control suburb {% if hide %}no_validate{% endif %}"
+                                name="member[{{ index }}][suburb]"  id="suburb_{{ index }}">
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3 pl-0">
+                        <label for="email_{{ index }}">Email</label>
+                        <input type="email" class="form-control email {% if hide %}no_validate{% endif %}"
+                               name="member[{{ index }}][email]"
+                                id="email_{{ index }}"/>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input {% if hide %}no_validate{% endif %}"
+                                   id="mailing_list_{{ index }}"
+                                   name="member[{{ index }}][mailing_list]">
+                            <label class="custom-control-label"
+                                   for="mailing_list_{{ index }}">
+                                {{ new_member.mailing_list_text|safe }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col">
+                        <label for="volunteer_preferences_{{ index }}">
+                            {{ new_member.volunteer_text }}
+                        </label>
+                        <select name="member[{{ index }}][volunteer_preferences]" multiple
+                                id="volunteer_preferences_{{ index }}"
+                                class="volunteer_input">
+                            {% for opt in volunteer_options %}
+                                <option>{{ opt.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</fieldset>

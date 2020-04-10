@@ -13,78 +13,266 @@
     <div class="row">
         <div class="col-lg-8 offset-lg-2">
             <div class="card">
+                <div class="card-header text-center">
+                    <h4 class="mb-0">Application for Membership</h4>
+                </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-                            <h3>Application for membership</h3>
-                            <p>Potentially some text here explaining process</p>
-                            <form method="POST" action="{% url 'new_membership' %}">
+                            {{ new_member.top_help_text | safe }}
+                            <form id="newMemberForm" method="POST" action="{% url 'new_membership' %}">
                                 {% csrf_token %}
                                 <div class="row">
                                     <div class="col">
-                                        <h5>Membership type:</h5>
-                                        {% for membership in membership_types %}
-                                            <div class="custom-control custom-radio">
-                                                <input type="radio" id="membership_type_radio_{{ membership.code }}" name="membership_type"
-                                                       class="custom-control-input" value="{{ membership.code }}">
-                                                <label class="custom-control-label" for="membership_type_radio_{{ membership.code }}">
-                                                    {{ membership.name }} -
-                                                    <span data-pricefor="full">${{ membership.price }}/year</span>
-                                                    <span data-pricefor="concession" class="d-none">${{ membership.concession_price }}/year</span>
-                                                </label>
+                                        <fieldset class="border px-3 pb-2 mb-3">
+                                            <legend class="w-auto px-2">
+                                                Membership Type
+                                            </legend>
+                                            <div class="row">
+                                                <div class="col">
+                                                    {% for membership in membership_types %}
+                                                        <div class="custom-control custom-radio">
+                                                            <input type="radio"
+                                                                   id="membership_type_radio_{{ membership.code }}"
+                                                                   name="membership_type"
+                                                                   class="custom-control-input"
+                                                                   value="{{ membership.code }}">
+                                                            <label class="custom-control-label"
+                                                                   for="membership_type_radio_{{ membership.code }}">
+                                                                {{ membership.name }} -
+                                                                <span data-pricefor="full">${{ membership.price }}/year</span>
+                                                                <span data-pricefor="concession"
+                                                                      class="d-none">${{ membership.concession_price }}/year</span>
+                                                            </label>
+                                                        </div>
+                                                    {% endfor %}
+                                                    <div class="form-group row mt-1 d-none"
+                                                         id="household_member_container">
+                                                        <label for="household_member_container"
+                                                               class="col-sm-auto col-form-label">Members:</label>
+                                                        <div class="col-sm-2">
+                                                            <select class="form-control form-control"
+                                                                    name="household_member_select"
+                                                                    id="household_member_select"
+                                                            >
+                                                                <option>3</option>
+                                                                <option>4</option>
+                                                                <option>5</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        {% endfor %}
+                                            <div class="row mt-3">
+                                                <div class="col">
+                                                    <div class="custom-control custom-checkbox">
+                                                        <input type="checkbox" class="custom-control-input"
+                                                               name="concession" id="concession">
+                                                        <label class="custom-control-label" for="concession">I have a
+                                                            concession
+                                                            card</label>
+                                                    </div>
+                                                    <div class="form-group row mt-1 d-none" id="concession_dropdown">
+                                                        <label class="col-form-label col-sm-4" for="concession_type">Concession
+                                                            type:</label>
+                                                        <div class="col-sm-8">
+                                                            <select class="form-control" name="concession_type"
+                                                                    id="concession_type">
+                                                                <option value="s">Student</option>
+                                                                <option value="p">Pension</option>
+                                                                <option value="h">Healthcare</option>
+                                                                <option value="o">Other</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        {{ new_member.mid_help_text | safe }}
+                                        {% include "includes/member/form_details.html" with index="1" hide=True %}
+                                        {% include "includes/member/form_details.html" with index="2" hide=True %}
+                                        {% include "includes/member/form_details.html" with index="3" hide=True %}
+                                        {% include "includes/member/form_details.html" with index="4" hide=True %}
+                                        {% include "includes/member/form_details.html" with index="5" hide=True %}
                                     </div>
                                 </div>
                                 <div class="row mt-3">
-                                    <div class="col">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" name="concession" id="concession">
-                                        <label class="custom-control-label" for="concession">I have a concession
-                                            card</label>
-                                    </div>
-                                    <div class="form-group row mt-1 d-none" id="concession_dropdown">
-                                        <label class="col-form-label col-sm-4" for="concession_type">Concession
-                                            type:</label>
-                                        <div class="col-sm-8">
-                                            <select class="form-control" name="concession_type"
-                                                    id="concession_type">
-                                                <option value="s">Student</option>
-                                                <option value="p">Pension</option>
-                                                <option value="h">Healthcare</option>
-                                                <option value="o">Other</option>
-                                            </select>
-                                        </div>
+                                    <div class="col d-flex justify-content-center">
+                                        <button class="btn btn-success" type="submit">Submit</button>
                                     </div>
                                 </div>
+                            </form>
                         </div>
-                        <div class="row mt-3">
-                            <div class="col d-flex justify-content-center">
-                                <button class="btn btn-success" type="submit">Next >></button>
-                            </div>
-                        </div>
-                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 {% endblock %}
 
 {% block extra_body %}
+    <script src="{% static "js/selectize.min.js" %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
     <script>
-        $('#membership_type_radio_i').prop("checked", true);
-        $('#concession').change(function() {
-           if(this.checked) {
-               $('#concession_dropdown').removeClass("d-none");
-               $('span[data-pricefor=full]').addClass("d-none");
-               $('span[data-pricefor=concession]').removeClass("d-none");
-           } else {
-               $('#concession_dropdown').addClass("d-none");
-               $('span[data-pricefor=full]').removeClass("d-none");
-               $('span[data-pricefor=concession]').addClass("d-none");
-           }
+        (function ($, window) {
+            $.fn.replaceOptions = function (options) {
+                var self, $option;
+
+                this.empty();
+                self = this;
+
+                $.each(options, function (index, option) {
+                    $option = $("<option></option>")
+                        .attr("value", option.value)
+                        .text(option.text);
+                    self.append($option);
+                });
+            };
+        })(jQuery, window);
+    </script>
+    <script>
+        // adds volunteer options to selectize
+        var volunteer_selectize = $('.volunteer_input').selectize();
+        {% for volunteer_option in form.data.volunteer_preferences %}
+            volunteer_selectize[0].selectize.addItem("{{volunteer_option}}");
+        {% endfor %}
+
+        // Handles post code search
+        $('.post_code').on('input', (e) => {
+            let id = e.target.id
+            let index = id.substr(id.length - 1);
+            let s = $('#suburb_' + index);
+            s.replaceOptions([]);
+            let post_code = $(e.target).val();
+            if (post_code.length === 4 && post_code?.match(/[0-9]{4}/g)) {
+                console.log(post_code)
+                $.ajax({
+                    url: "/api/postcode/" + post_code,
+                    type: "GET",
+                    success: function (res) {
+                        var options = [];
+                        for (i = 0; i < res.length; i++) {
+                            options.push({
+                                text: res[i].name + " " + res[i].state.abbreviation,
+                                value: res[i].name
+                            })
+                        }
+                        s.replaceOptions(options);
+                    },
+                    error: function (err) {
+                        console.log("error");
+                        console.log(err);
+                    }
+                });
+            }
+        });
+
+        // Toggles between hide/show when fieldsets are collapsed
+        $('a[data-toggle=collapse]').click(function () {
+            $(this).text(function (i, old) {
+                return old === '(hide)' ? '(show)' : '(hide)';
+            });
+        });
+
+        function showHouseholdFieldset(show = true) {
+            var x = $('#household_member_select').val();
+            hideMemberFieldset(1, 5);
+            showMemberFieldset(1, x, show);
+        }
+
+        function showMemberFieldset(x, e = x, show = true) {
+            while (x <= e) {
+                var sel = $('#member_fieldset_' + x);
+                sel.removeClass("d-none");
+                if (show) {
+                    sel.find('.collapse').addClass('show');
+                    sel.find('input').removeClass('no_validate');
+                    sel.find('a[data-toggle=collapse]').text("(hide)");
+                }
+                x++;
+            }
+        }
+
+        function hideMemberFieldset(x, e = x) {
+            while (x <= e) {
+                var sel = $('#member_fieldset_' + x)
+                sel.addClass("d-none");
+                sel.find('input, select').addClass('no_validate');
+                x++;
+            }
+        }
+
+        $('input[name=membership_type]').change(function (e) {
+            var membership_type = $(this).val();
+            $('#household_member_container').addClass("d-none");
+            if (membership_type === "i") {
+                showMemberFieldset(1);
+                hideMemberFieldset(2, 5);
+            } else if (membership_type === "c") {
+                showMemberFieldset(1);
+                showMemberFieldset(2);
+                hideMemberFieldset(3, 5);
+            } else if (membership_type === "h") {
+                $('#household_member_container').removeClass("d-none");
+                ``
+                showHouseholdFieldset();
+            } else {
+
+            }
+        });
+
+        $('#household_member_select').on('input', function () {
+            showHouseholdFieldset();
+        });
+
+        // Changes prices to concession
+        $('#concession').change(function () {
+            if (this.checked) {
+                $('#concession_dropdown').removeClass("d-none");
+                $('span[data-pricefor=full]').addClass("d-none");
+                $('span[data-pricefor=concession]').removeClass("d-none");
+            } else {
+                $('#concession_dropdown').addClass("d-none");
+                $('span[data-pricefor=full]').removeClass("d-none");
+                $('span[data-pricefor=concession]').addClass("d-none");
+            }
+        });
+
+        $.validator.addMethod(
+            "regex",
+            function (value, element, regexp) {
+                var re = new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            },
+            "Please check your input."
+        );
+
+        $.validator.addClassRules({
+            name: {
+                required: true,
+                maxlength: 35,
+            },
+            phone_number: {
+                required: true,
+                regex: "^0?([0-9]{3})[ .-]?\\2([0-9]{3})[ .-]?\\3([0-9]{3})$"
+            },
+            post_code: {
+                required: true,
+                digits: true,
+                minlength: 4,
+                maxlength: 4,
+            },
+            suburb: {
+                required: true
+            },
+            email: {
+                required: true,
+                email: true
+            }
+        });
+
+        $("#newMemberForm").validate({
+            ignore: '.no_validate, input[type=select-multiple]'
         });
     </script>
 {% endblock %}
