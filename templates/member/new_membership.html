@@ -186,7 +186,7 @@
                 sel.removeClass("d-none");
                 if (show) {
                     sel.find('.collapse').addClass('show');
-                    sel.find('input').removeClass('no_validate');
+                    sel.find('input, select').removeClass('no_validate');
                     sel.find('a[data-toggle=collapse]').text("(hide)");
                 }
                 x++;
@@ -272,7 +272,9 @@
         });
 
         $("#newMemberForm").validate({
-            ignore: '.no_validate, input[type=select-multiple]'
+            ignore: '.no_validate, input[type=select-multiple]',
+            validClass: 'is-valid',
+            errorClass: 'is-invalid'
         });
     </script>
 {% endblock %}
