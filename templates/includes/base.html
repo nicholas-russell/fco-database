@@ -41,7 +41,14 @@
         </ul>
     </div>
 </nav>
-<div class="container-md mb-5">
+
+<div class="d-flex justify-content-center" id="loading-spinner">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<div class="container-md mb-5" style="display: none" id="loading-content">
     {% for message in messages %}
         <div class="alert {{ message.tags }} alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -61,5 +68,13 @@
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
 {% block extra_body %}{% endblock %}
+<script>
+    $(window).on('load', function(){
+        $('#loading-spinner').fadeOut("fast", function() {
+            $(this).remove();
+            $('#loading-content').fadeIn();
+        });
+    });
+</script>
 </body>
 </html>
