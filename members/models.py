@@ -53,7 +53,7 @@ class Member(models.Model):
     first_name = models.CharField(max_length=35)
     last_name = models.CharField(max_length=35)
     email = models.EmailField()
-    phone_number = models.CharField(max_length=9, null=True, blank=True)
+    phone_number = models.CharField(max_length=16, null=True, blank=True)
     postcode = models.CharField(max_length=4, null=True, blank=True)
     suburb = models.CharField(max_length=32, null=True, blank=True)
     mailing_list = models.BooleanField(default=True)

@@ -3,12 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.http import response
 from django.views import generic
 from . import models
-from .forms import is_membership_form_valid, is_member_form_valid
+from .forms import is_membership_form_valid, is_member_form_valid, MembershipForm
+from django.views.decorators.cache import never_cache
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db import IntegrityError
 import requests
 from querystring_parser import parser
+
 
 @login_required
 def index(request):
@@ -93,51 +95,69 @@ class NewMembershipDetails(LoginRequiredMixin, generic.View):
 
 
 class NewMembership(LoginRequiredMixin, generic.View):
-    def get(self, request):
+    def get(self, request, form=None):
         try:
             potential_membership = models.Membership.objects.get(user=request.user)
         except models.Membership.DoesNotExist:
             potential_membership = None
 
         if potential_membership is not None:  # a membership exists
-            if models.Member.objects.filter(membership=potential_membership):  # a membership exists with no member details
+            if models.Member.objects.filter(
+                    membership=potential_membership):  # a membership exists with no member details
                 messages.info(request, "You already have a membership!")
                 return redirect("member_index")
             else:
                 messages.info(request, "Please finish your membership application before continuing")
-                return redirect("new_membership_details", membership_type=potential_membership.membership_type.url_name())
+
         context = {
             'membership_types': models.MembershipType.objects.filter(active=True),
-            'volunteer_options': models.VolunteerOption.objects.all()
+            'volunteer_options': models.VolunteerOption.objects.all(),
+            'form': form
         }
         return render(request, "member/new_membership.html", context)
 
     def post(self, request):
-        post_dict = parser.parse(request.POST.urlencode())
-        return response.JsonResponse(post_dict, safe=True)
-        if not is_membership_form_valid(request):
-            messages.error(request, "There was an error in the form. Please try again")
-            return redirect("new_membership")
+        form = MembershipForm(parser.parse(request.POST.urlencode()))
 
-        data = request.POST
+        if not form.valid:
+            messages.error(request, "There was an error in the form. Please try again")
+            return self.get(request, form.data)
+
         new_membership = models.Membership()
         new_membership.user = request.user
-        new_membership.membership_type = models.MembershipType.objects.get(code=data.get("membership_type"))
-        if data.get("concession") is not None:
-            if data.get("concession") == "on":
-                new_membership.concession = True
+        new_membership.membership_type = models.MembershipType.objects.get(code=form.membership_type)
+        new_membership.concession = form.concession
+        new_membership.concession_type = form.concession_type
 
         try:
             new_membership.save()
         except IntegrityError:
             messages.error(request, "There was an error in the form. Please try again")
-            return redirect("new_membership")
+            return self.get(request, form.data)
         except RuntimeError:
-            messages.error(request, "There was an error in the form. Please try again")
-            return redirect("new_membership")
+            messages.error(request, "There was server error. Please try again later")
+            return self.get(request, form.data)
 
-        return redirect("new_membership_details", membership_type=new_membership.membership_type.url_name())
+        new_members = []
+        for member in form.members:
+            new_member = models.Member.objects.create(**member, membership=new_membership)
+            new_members.append(new_member)
 
+        for member_model in new_members:
+            try:
+                member_model.save()
+            except IntegrityError:
+                messages.error(request, "There was an error in the form. Please try again")
+                print(new_membership)
+                new_membership.delete()
+                return self.get(request, form.data)
+            except RuntimeError:
+                messages.error(request, "There was server error. Please try again later")
+                print(new_membership)
+                new_membership.delete()
+                return self.get(request, form.data)
+
+        return response.HttpResponse("Success!!")
 
 @login_required
 def postcode(request, post_code):

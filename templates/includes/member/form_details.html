@@ -43,12 +43,12 @@
                 </div>
                 <div class="row">
                     <div class="col-md-2 mb-3">
-                        <label for="post_code_{{ index }}">Postcode</label>
+                        <label for="postcode_{{ index }}">Postcode</label>
                         <input type="text"
-                               class="form-control post_code {% if hide %}no_validate{% endif %}"
-                               name="member[{{ index }}][post_code]"
-                               id="post_code_{{ index }}"
-                               {% if form.data.post_code %}value="{{ form.data.post_code }}"{% endif %}
+                               class="form-control postcode {% if hide %}no_validate{% endif %}"
+                               name="member[{{ index }}][postcode]"
+                               id="postcode_{{ index }}"
+                               {% if form.data.postcode %}value="{{ form.data.postcode }}"{% endif %}
                                
                         />
                     </div>

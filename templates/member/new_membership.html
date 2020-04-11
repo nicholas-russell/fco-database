@@ -52,7 +52,7 @@
                                                                class="col-sm-auto col-form-label">Members:</label>
                                                         <div class="col-sm-2">
                                                             <select class="form-control form-control"
-                                                                    name="household_member_select"
+                                                                    name="household_members"
                                                                     id="household_member_select"
                                                             >
                                                                 <option>3</option>
@@ -138,16 +138,16 @@
         {% endfor %}
 
         // Handles post code search
-        $('.post_code').on('input', (e) => {
+        $('.postcode').on('input', (e) => {
             let id = e.target.id
             let index = id.substr(id.length - 1);
             let s = $('#suburb_' + index);
             s.replaceOptions([]);
-            let post_code = $(e.target).val();
-            if (post_code.length === 4 && post_code?.match(/[0-9]{4}/g)) {
-                console.log(post_code)
+            let postcode = $(e.target).val();
+            if (postcode.length === 4 && postcode?.match(/[0-9]{4}/g)) {
+                console.log(postcode)
                 $.ajax({
-                    url: "/api/postcode/" + post_code,
+                    url: "/api/postcode/" + postcode,
                     type: "GET",
                     success: function (res) {
                         var options = [];
@@ -256,7 +256,7 @@
                 required: true,
                 regex: "^0?([0-9]{3})[ .-]?\\2([0-9]{3})[ .-]?\\3([0-9]{3})$"
             },
-            post_code: {
+            postcode: {
                 required: true,
                 digits: true,
                 minlength: 4,
