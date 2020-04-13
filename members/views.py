@@ -28,14 +28,10 @@ def index(request):
         return redirect("new_membership_details", membership_type=membership.membership_type.url_name())
 
     context = {
-        'membership_type': membership.membership_type.name,
-        'membership_expiry': membership.membership_expiry,
-        'working_expiry': membership.working_expiry,
-        'concession': membership.concession,
-        'paid': membership.paid,
+        'membership': membership,
         'members': members
     }
-    return render(request, "member/member_index.html", {'membership': context})
+    return render(request, "member/member_index.html", context)
 
 
 class NewMembershipDetails(LoginRequiredMixin, generic.View):

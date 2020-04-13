@@ -18,3 +18,7 @@ label.is-invalid {
     font-size: 80%;
     color: #dc3545;
 }
+
+.quick-action-card:hover {
+    border-color: #007bff!important;
+}

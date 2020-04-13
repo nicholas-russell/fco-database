@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from fco_database.lib import RandomFileName
 from django.contrib.postgres.fields import ArrayField
-
+from datetime import date
 
 class MembershipType(models.Model):
     name = models.CharField(max_length=32)
@@ -46,6 +46,13 @@ class Membership(models.Model):
 
     def __str__(self):
         return "[{},{}] {} ".format(self.id, self.membership_type, self.user.email)
+
+    @property
+    def has_working_discount(self):
+        if self.working_expiry is None:
+            return False
+        else:
+            return self.working_expiry >= date.today()
 
 
 class Member(models.Model):

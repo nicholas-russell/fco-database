@@ -5,20 +5,75 @@
 
 {% block content %}
     <div class="row">
-        <div class="col">
+        <div class="col-3">
+            <div class="card">
+                <div class="card-header">
+                    My Membership
+                    {% if membership.membership_active %}
+                                <span class="badge badge-success">Active</span>
+                            {% else %}
+                                <span class="badge badge-danger">Inactive</span>
+                            {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if membership.paid %}
+                        <p>
+                            <strong>Expiry: </strong>
+                            {{ membership.membership_expiry|date:"d F Y" }}
+
+                        </p>
+                        <p>
+                            <strong>Working Discount: </strong>
+                            {% if membership.has_working_discount %}
+                                <span class="badge badge-success">Active</span>
+                                <br/>
+                                <em>You will recieve 20% off supermarket items until {{ membership.working_expiry|date:"d F Y" }}</em>
+                            {% else %}
+                                <span class="badge badge-danger">Inactive</span>
+                                <br/>
+                                <em>You will recieve 5% off supermarket items</em>
+                            {% endif %}
+                        </p>
+                        {% if membership.concession %}
+                            <p>
+                                <strong>Concession: </strong>
+                                <span class="badge badge-success">Yes ({{ membership.get_concession_type_display }})</span>
+                            </p>
+                        {% endif %}
+                        <p><strong>Created: </strong> {{ membership.ts_entered|date:"d F Y" }}</p>
+                    {% else %}
+                        <strong>Your membership is not active without <a href="#">payment</a> of membership fees.</strong>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6">
             <div class="card">
                 <div class="card-body">
-                    <h3>Membership Details</h3>
-                    <ul>
-                        <li>Type: {{ membership.membership_type }}</li>
-                        <li>Expiry: {{ membership.working_expiry }}</li>
-                        <li>Concession: {{ membership.concession }}</li>
-                        <li>Paid: {{ membership.paid }}</li>
-                    </ul>
-                    {% for member in membership.members %}
-                        <p>{{ member.first_name }} {{ member.last_name }} {{ member.email }}</p>
-                    {% endfor %}
+                    <h3 class="text-center">Canberra Food Co-Op Members</h3>
+                    <div class="row">
+                        <div class="col">
+                            <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
+                                egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.
+                                Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris
+                                placerat eleifend leo.</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+
+                        </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="list-group">
+                <a class="list-group-item list-group-item-info">Quick Actions</a>
+                <a href="#" class="list-group-item list-group-item-action">Renew Membership</a>
+                <a href="#" class="list-group-item list-group-item-action">View Working Hours</a>
             </div>
         </div>
     </div>
