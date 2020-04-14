@@ -1,0 +1,13 @@
+Membership
+    - Membership Sign Up
+        - TODO: Redirect users to new membership form on first sign up
+        - TODO: Implement social login
+    - Index
+        - TODO: Make view for logged in users who aren't members
+    - Payment
+        - TODO: make payment system
+    - Volunteer Hours
+        - TODO: optimize entry on admin system
+        - TODO: write method to calculate expiry based on membership object
+        - TODO: add post save signal for volunteer hours
+

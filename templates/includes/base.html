@@ -17,7 +17,7 @@
 <body>
 <nav class="navbar navbar-expand-md fixed-top navbar-dark">
     <a class="navbar-brand" href="#">
-        <!--<img src="{% static "img/logo.png" %}" width="30" height="30" class="d-inline-block align-top" alt="">-->
+        {% comment %}<img src="{% static "img/logo.png" %}" width="30" height="30" class="d-inline-block align-top" alt="">{% endcomment %}
         The Food Co-Op
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapsedContent">
@@ -27,16 +27,7 @@
     <div class="collapse navbar-collapse" id="navbarCollapsedContent">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a class="nav-link">Home</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link">Menu Item 1</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link">Menu Item 2</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link">Menu item 3</a>
+                <a href="#" class="nav-link">Home</a>
             </li>
         </ul>
     </div>

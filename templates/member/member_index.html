@@ -6,7 +6,7 @@
 {% block content %}
     <div class="row">
         <div class="col-3">
-            <div class="card">
+            <div class="card mb-2">
                 <div class="card-header">
                     My Membership
                     {% if membership.membership_active %}
@@ -47,6 +47,14 @@
 
                 </div>
             </div>
+            <div class="list-group">
+                {% for member in members %}
+                    <a href="#" class="list-group-item list-group-item-action">
+                        {{ member.first_name }} {{ member.last_name }} <br/>
+                        <small>{{ member.email }}</small>
+                    </a>
+                {% endfor %}
+            </div>
         </div>
 
         <div class="col-6">
@@ -71,7 +79,7 @@
         </div>
         <div class="col-3">
             <div class="list-group">
-                <a class="list-group-item list-group-item-info">Quick Actions</a>
+                <a class="list-group-item list-group-item-light">Quick Actions</a>
                 <a href="#" class="list-group-item list-group-item-action">Renew Membership</a>
                 <a href="#" class="list-group-item list-group-item-action">View Working Hours</a>
             </div>

@@ -54,8 +54,6 @@
                     </div>
                     <div class="col-md-4 mb-3 pl-0">
                         <label for="suburb_{{ index }}">Suburb</label>
-                        {% comment %}<input type="text" class="form-control suburb"
-                               name="member[{{ index }}][suburb]"  id="suburb_{{ index }}"/>{% endcomment %}
                         <select class="form-control suburb {% if hide %}no_validate{% endif %}"
                                 name="member[{{ index }}][suburb]"  id="suburb_{{ index }}">
                         </select>

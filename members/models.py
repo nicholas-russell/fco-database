@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from fco_database.lib import RandomFileName
 from django.contrib.postgres.fields import ArrayField
 from datetime import date
+from .volunteer import calc_new_volunteer_expiry
 
 class MembershipType(models.Model):
     name = models.CharField(max_length=32)
@@ -45,7 +46,7 @@ class Membership(models.Model):
     ts_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return "[{},{}] {} ".format(self.id, self.membership_type, self.user.email)
+        return self.user.email
 
     @property
     def has_working_discount(self):
@@ -67,7 +68,7 @@ class Member(models.Model):
     volunteer_preferences = ArrayField(models.CharField(max_length=3), null=True, blank=True)
 
     def __str__(self):
-        return "[{}] {} {}".format(self.id, self.first_name, self.last_name)
+        return self.email
 
 
 class Shift(models.Model):
@@ -78,6 +79,12 @@ class Shift(models.Model):
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
+    def save(self, *args, **kwargs):
+        super(Shift, self).save(*args, **kwargs)
+        membership = self.member.membership
+        member_number = Member.objects.filter(membership=membership).count()
+        membership.working_expiry = calc_new_volunteer_expiry(self.hours, membership.working_expiry, member_number)
+        membership.save()
 
 class VolunteerOption(models.Model):
     code = models.CharField(max_length=3)
