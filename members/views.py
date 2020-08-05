@@ -20,13 +20,10 @@ def index(request):
         membership = None
 
     if membership is None:
-        messages.info(request, "You need to add a membership to use your account")
+        #messages.info(request, "You need to add a membership to use your account")
         return redirect('new_membership')
 
     members = models.Member.objects.filter(membership=membership)
-    if not members:
-        return redirect("new_membership_details", membership_type=membership.membership_type.url_name())
-
     context = {
         'membership': membership,
         'members': members
@@ -153,7 +150,7 @@ class NewMembership(LoginRequiredMixin, generic.View):
                 new_membership.delete()
                 return self.get(request, form.data)
 
-        return response.HttpResponse("Success!!")
+        return redirect("member_index")
 
 @login_required
 def postcode(request, post_code):

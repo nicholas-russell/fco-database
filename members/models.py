@@ -5,6 +5,7 @@ from django.contrib.postgres.fields import ArrayField
 from datetime import date
 from .volunteer import calc_new_volunteer_expiry
 
+
 class MembershipType(models.Model):
     name = models.CharField(max_length=32)
     code = models.CharField(max_length=1)
@@ -72,10 +73,10 @@ class Member(models.Model):
 
 
 class Shift(models.Model):
-    member = models.ForeignKey(Member, on_delete=models.DO_NOTHING)
+    member = models.ForeignKey(Member, on_delete=models.CASCADE)
     date = models.DateField()
     hours = models.DecimalField(decimal_places=1, max_digits=3)
-    entered_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    #entered_by = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
 
@@ -85,6 +86,7 @@ class Shift(models.Model):
         member_number = Member.objects.filter(membership=membership).count()
         membership.working_expiry = calc_new_volunteer_expiry(self.hours, membership.working_expiry, member_number)
         membership.save()
+
 
 class VolunteerOption(models.Model):
     code = models.CharField(max_length=3)

@@ -20,8 +20,7 @@ class MembershipAdmin(admin.ModelAdmin):
 class ShiftAdmin(admin.ModelAdmin):
     list_display = ("member",
                     "date",
-                    "hours",
-                    "entered_by")
+                    "hours")
     empty_value_display = 'unknown'
 
 

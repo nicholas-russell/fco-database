@@ -2,6 +2,7 @@ Membership
     - Membership Sign Up
         - TODO: Redirect users to new membership form on first sign up
         - TODO: Implement social login
+        - TODO: new members report (1 monthly)
     - Index
         - TODO: Make view for logged in users who aren't members
     - Payment
@@ -10,4 +11,5 @@ Membership
         - TODO: optimize entry on admin system
         - TODO: write method to calculate expiry based on membership object
         - TODO: add post save signal for volunteer hours
+        - TODO: selectize search for shjifts
 

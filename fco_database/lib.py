@@ -5,6 +5,7 @@ from django.utils.deconstruct import deconstructible
 from random import randint
 import random
 
+
 @deconstructible
 class RandomFileName(object):
     def __init__(self, path):
