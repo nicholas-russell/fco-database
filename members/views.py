@@ -125,6 +125,7 @@ class ViewMembership(LoginRequiredMixin, generic.View):
             'members': members,
             'volunteer_options': models.VolunteerOption.objects.all(),
             'form': form
+            # TODO: add boolean if more members are able to be put on membership
         }
         return render(request, "member/view_membership.html", context)
 
@@ -137,4 +138,12 @@ class ViewMember(LoginRequiredMixin, generic.View):
         pass
 
     def post(self, request, member_id):
+        pass
+
+
+class NewMember(LoginRequiredMixin, generic.View):
+    def get(self, request, form):
+        pass
+
+    def post(self, request, form):
         pass

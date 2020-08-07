@@ -31,25 +31,25 @@
                             {% else %}
                                 <span class="badge badge-danger">Inactive</span>
                                 <br/>
-                                <em>You will recieve 5% off supermarket items</em>
+                                <em>You will receive 5% off supermarket items</em>
                             {% endif %}
                         </p>
-                        {% if membership.concession %}
+                        {% comment %}{% if membership.concession %}
                             <p>
                                 <strong>Concession: </strong>
                                 <span class="badge badge-success">Yes ({{ membership.get_concession_type_display }})</span>
                             </p>
-                        {% endif %}
-                        <p><strong>Created: </strong> {{ membership.ts_entered|date:"d F Y" }}</p>
+                        {% endif %}{% endcomment %}
+                        {% comment %}<p><strong>Created: </strong> {{ membership.ts_entered|date:"d F Y" }}</p>{% endcomment %}
                     {% else %}
                         <strong>Your membership is not active without <a href="#">payment</a> of membership fees.</strong>
                     {% endif %}
-
+                    <a class="btn btn-primary" href="{% url "view_membership" %}">View/Edit Membership</a>
                 </div>
             </div>
             <div class="list-group">
                 {% for member in members %}
-                    <a href="#" class="list-group-item list-group-item-action">
+                    <a href="{% url "view_member" member_id=member.pk %}" class="list-group-item list-group-item-action">
                         {{ member.first_name }} {{ member.last_name }} <br/>
                         <small>{{ member.email }}</small>
                     </a>

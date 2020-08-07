@@ -88,6 +88,7 @@ class Shift(models.Model):
         membership.save()
 
 
+# Todo: remove code and just use name
 class VolunteerOption(models.Model):
     code = models.CharField(max_length=3)
     name = models.CharField(max_length=32)

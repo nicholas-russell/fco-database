@@ -4,5 +4,94 @@
 {% load widget_tweaks %}
 
 {% block content %}
+    <div class="row">
+        <div class="col-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Membership Details
+                </div>
+                <div class="card-body">
+                    <p>
+                        <strong>Type:</strong>
+                        {{ membership.membership_type }}
+                        <a href="#">(update)</a>
+                    </p>
+                    <p>
+                        <strong>Expiry: </strong>
+                        {{ membership.membership_expiry|date:"d F Y" }}
+                        <a href="#">(renew)</a>
 
+                    </p>
+                    <p>
+                        <strong>Working Discount: </strong>
+                        {% if membership.has_working_discount %}
+                            <span class="badge badge-success">Active</span>
+                            <br/>
+                            <em>You will receive 20% off supermarket items
+                                until {{ membership.working_expiry|date:"d F Y" }}</em>
+                        {% else %}
+                            <span class="badge badge-danger">Inactive</span>
+                            <br/>
+                            <em>You will receive 5% off supermarket items</em>
+                        {% endif %}
+                    </p>
+                    {% if membership.concession %}
+                        <p>
+                            <strong>Concession: </strong>
+                            <span class="badge badge-success">Yes ({{ membership.get_concession_type_display }})</span>
+                        </p>
+                    {% endif %}
+                    <p><strong>Created: </strong> {{ membership.ts_entered|date:"d F Y" }}</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header">
+                    Payment History
+                </div>
+                <div class="card-body">
+                    Payment information here
+                </div>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="card">
+                <div class="card-header">
+                    Members
+                </div>
+                <div class="card-body">
+                <p>Click on the member to edit or delete them.</p>
+                    <table class="table hover">
+                        <thead class="thead-light">
+                            <tr>
+                              <th scope="col">Name</th>
+                              <th scope="col">Email</th>
+                              <th scope="col">Phone Number</th>
+                              <th scope="col">Volunteering</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in members %}
+                                <a href="{% url "view_member" member_id=member.pk %}">
+                                    <tr>
+                                        <td>
+                                            {{ member.first_name }} {{ member.last_name }}
+                                        </td>
+                                        <td>
+                                            {{ member.email }}
+                                        </td>
+                                        <td>
+                                            {{ member.phone_number }}
+                                        </td>
+                                        <td>
+                                            {{ member.volunteer_preferences|join:", " }}
+                                        </td>
+                                    </tr>
+                                </a>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
