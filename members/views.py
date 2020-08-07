@@ -20,7 +20,6 @@ def index(request):
         membership = None
 
     if membership is None:
-        #messages.info(request, "You need to add a membership to use your account")
         return redirect('new_membership')
 
     members = models.Member.objects.filter(membership=membership)
@@ -29,63 +28,6 @@ def index(request):
         'members': members
     }
     return render(request, "member/member_index.html", context)
-
-
-class NewMembershipDetails(LoginRequiredMixin, generic.View):
-    def get(self, request, membership_type):
-        volunteer_options = models.VolunteerOption.objects.all()
-        context = {
-            'volunteer_options': volunteer_options
-        }
-        if membership_type not in ["individual", "household", "couple"]:
-            raise response.Http404()
-        return render(request, "member/new_member_" + membership_type + ".html", context)
-
-
-    def post(self, request, membership_type):
-        if membership_type == "individual":
-            post_dict = parser.parse(request.POST.urlencode())
-            return response.JsonResponse(post_dict, safe=True)
-            form = is_member_form_valid(request, membership_type)
-            if not form['valid']:
-                if form['redirect'] == 'login':
-                    return redirect('account_login')
-                elif form['redirect'] == 'membership':
-                    return redirect('new_membership')
-                else:
-                    volunteer_options = models.VolunteerOption.objects.all()
-                    context = {
-                        'volunteer_options': volunteer_options,
-                        'form': form
-                    }
-                    return render(request, "member/new_member_" + membership_type + ".html", context)
-            else:
-                new_member = models.Member()
-                new_member.membership = form['data']['membership']
-                new_member.first_name = request.user.first_name
-                new_member.last_name = request.user.last_name
-                new_member.email = request.user.email
-                new_member.phone_number = form['data']['phone_number']
-                new_member.postcode = form['data']['post_code']
-                new_member.suburb = form['data']['suburb']
-                new_member.mailing_list = form['data']['mailing_list']
-                new_member.volunteer_preferences = form['data']['volunteer_preferences']
-                try:
-                    new_member.save()
-                    return redirect('member_index')
-                except IntegrityError:
-                    messages.error(request, "There was an error in the form. Please try again")
-                    return redirect("new_membership_details", membership_type)
-                except RuntimeError:
-                    messages.error(request, "There was an error in the form. Please try again")
-                    return redirect("new_membership_details", membership_type)
-        elif membership_type == "couple":
-            post_dict = parser.parse(request.POST.urlencode())
-            return response.JsonResponse(post_dict, safe=True)
-        elif membership_type == "household":
-            pass
-        else:
-            raise response.Http404("Invalid membership type")
 
 
 class NewMembership(LoginRequiredMixin, generic.View):
@@ -103,6 +45,9 @@ class NewMembership(LoginRequiredMixin, generic.View):
             else:
                 messages.info(request, "Please finish your membership application before continuing")
 
+        return self.show_form(request, form)
+
+    def show_form(self, request, form):
         context = {
             'membership_types': models.MembershipType.objects.filter(active=True),
             'volunteer_options': models.VolunteerOption.objects.all(),
@@ -161,8 +106,35 @@ def postcode(request, post_code):
 
 
 class ViewMembership(LoginRequiredMixin, generic.View):
-    def get(self, request):
-        pass
+    def get(self, request, member_id=None, form=None):
+        if member_id is None:
+            try:
+                membership = models.Membership.objects.get(user=request.user)
+            except models.Membership.DoesNotExist:
+                return NewMembership.show_form(request)
+        else:
+            try:
+                membership = models.Membership.objects.get(pk=member_id)
+            except models.Membership.DoesNotExist:
+                return response.Http404(models.Membership.DoesNotExist)
+
+        members = models.Member.objects.filter(membership=membership)
+        # TODO: add payments model here
+        context = {
+            'membership': membership,
+            'members': members,
+            'volunteer_options': models.VolunteerOption.objects.all(),
+            'form': form
+        }
+        return render(request, "member/view_membership.html", context)
 
     def post(self, request):
+        pass
+
+
+class ViewMember(LoginRequiredMixin, generic.View):
+    def get(self, request, member_id):
+        pass
+
+    def post(self, request, member_id):
         pass
