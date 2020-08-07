@@ -42,7 +42,7 @@ class Membership(models.Model):
     concession_proof = models.ImageField(upload_to=RandomFileName('concession_images'), blank=True, null=True)
     concession_type = models.CharField(max_length=1, choices=concession_choices, null=True, blank=True)
     paid = models.BooleanField(default=False)
-    membership_active = models.BooleanField(default=True)
+    membership_active = models.BooleanField(default=False)
     ts_entered = models.DateTimeField(auto_now_add=True)
     ts_updated = models.DateTimeField(auto_now=True)
 

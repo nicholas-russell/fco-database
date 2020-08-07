@@ -41,6 +41,7 @@ class NewMembershipDetails(LoginRequiredMixin, generic.View):
             raise response.Http404()
         return render(request, "member/new_member_" + membership_type + ".html", context)
 
+
     def post(self, request, membership_type):
         if membership_type == "individual":
             post_dict = parser.parse(request.POST.urlencode())
@@ -152,7 +153,16 @@ class NewMembership(LoginRequiredMixin, generic.View):
 
         return redirect("member_index")
 
+
 @login_required
 def postcode(request, post_code):
     data = requests.get("http://v0.postcodeapi.com.au/suburbs/{}.json".format(post_code))
     return response.HttpResponse(data.content, content_type='application/json')
+
+
+class ViewMembership(LoginRequiredMixin, generic.View):
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        pass
