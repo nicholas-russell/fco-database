@@ -71,23 +71,32 @@
                         </thead>
                         <tbody>
                             {% for member in members %}
-                                <a href="{% url "view_member" member_id=member.pk %}">
-                                    <tr>
-                                        <td>
+                                <tr>
+                                    <td>
+                                        <a href="{% url "view_member" member_id=member.pk %}">
                                             {{ member.first_name }} {{ member.last_name }}
-                                        </td>
-                                        <td>
-                                            {{ member.email }}
-                                        </td>
-                                        <td>
-                                            {{ member.phone_number }}
-                                        </td>
-                                        <td>
-                                            {{ member.volunteer_preferences|join:", " }}
-                                        </td>
-                                    </tr>
-                                </a>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        {{ member.email }}
+                                    </td>
+                                    <td>
+                                        {{ member.phone_number }}
+                                    </td>
+                                    <td>
+                                        {{ member.volunteer_preferences|join:", " }}
+                                    </td>
+                                </tr>
                             {% endfor %}
+                        {% if membership.can_add_member %}
+                            <tr>
+                                <td colspan="4">
+                                    <a href="#" class="btn btn-primary btn-sm">
+                                        Add a member
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endif %}
                         </tbody>
                     </table>
                 </div>

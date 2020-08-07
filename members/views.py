@@ -124,7 +124,7 @@ class ViewMembership(LoginRequiredMixin, generic.View):
             'membership': membership,
             'members': members,
             'volunteer_options': models.VolunteerOption.objects.all(),
-            'form': form
+            'form': form,
             # TODO: add boolean if more members are able to be put on membership
         }
         return render(request, "member/view_membership.html", context)

@@ -56,6 +56,19 @@ class Membership(models.Model):
         else:
             return self.working_expiry >= date.today()
 
+    @property
+    def can_add_member(self):
+        members_count = Member.objects.filter(membership=self).count()
+        print(self.membership_type.__str__())
+        if self.membership_type.__str__() == "Individual":
+            return members_count < 1
+        elif self.membership_type.__str__() == "Couple":
+            return members_count < 2
+        elif self.membership_type.__str__() == "Household":
+            return members_count < 5
+        else:
+            return False
+
 
 class Member(models.Model):
     membership = models.ForeignKey(Membership, on_delete=models.CASCADE)
