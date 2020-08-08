@@ -1,6 +1,4 @@
-from django import forms
-from allauth.account.forms import SignupForm
-from .models import Membership, VolunteerOption
+from .models import Membership, VolunteerOption, Member
 import re
 
 
@@ -9,9 +7,6 @@ class MembershipForm:
     def __init__(self, data):
         self.valid = True
         self.errors = []
-
-        self.member_fields = ['first_name', 'last_name', 'phone_number', 'postcode',
-                              'suburb', 'email', 'mailing_list', 'volunteer_preferences']
 
         self.members = []
         self.member_count = None
@@ -53,7 +48,6 @@ class MembershipForm:
                 self.members[i]['mailing_list'] = False
             self.members[i]['phone_number'] = member['phone_number'].replace(" ", "")
 
-
     def validate_structure(self):
         if 'membership_type' not in self.data:
             return False
@@ -71,30 +65,9 @@ class MembershipForm:
 
     def validate_members(self):
         volunteer_options = VolunteerOption.objects.all()
-        email_re = re.compile(
-            r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"
-            r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"'
-            r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)
         for i, member in enumerate(self.members):
-            if all(field in member and not self.empty(field) for field in self.member_fields):
-                if len(member['first_name']) > 35:
-                    self.__error__("First name is too long")
-                if len(member['last_name']) > 35:
-                    self.__error__("Last name is too long")
-                if email_re.match(member['email']) is None:
-                    self.__error__("Email is an incorrect format")
-                if len(member['phone_number']) > 16:
-                    self.__error__("Phone number is too long")
-                if len(member['postcode']) > 4:
-                    self.__error__("Postcode is too long")
-                if len(member['suburb']) > 32:
-                    self.__error__("Suburb is too long")
-                if type(member['mailing_list']) is not bool:
-                    self.__error__("Invalid form data")
-                for opt in member['volunteer_preferences']:
-                    if volunteer_options.filter(name=opt).count == 0:
-                        self.__error__("Volunteer option is not valid")
-            else:
+            member_form = MemberForm(member, volunteer_options)
+            if not member_form.valid:
                 self.__error__("Missing form fields")
 
     def __str__(self):
@@ -108,6 +81,55 @@ class MembershipForm:
                f'concession_type: {self.concession_type}\n' \
                f'members: {self.members}\n' \
                f'members_n: {len(self.members)}'
+
+    def __error__(self, message=None):
+        self.valid = False
+        if message is not None:
+            self.errors.append(message)
+
+    @staticmethod
+    def empty(data):
+        return data is None or data == ""
+
+
+class MemberForm:
+
+    def __init__(self, data, volunteer_options):
+        self.valid = True
+        self.errors = []
+
+        self.fields = Member.get_form_fields()
+        
+        self.volunteer_options = volunteer_options
+        self.data = data
+        self.validate()
+
+    def validate(self):
+        email_re = re.compile(
+            r"(^[-!#$%&'*+/=?^_`{}|~0-9A-Z]+(\.[-!#$%&'*+/=?^_`{}|~0-9A-Z]+)*"
+            r'|^"([\001-\010\013\014\016-\037!#-\[\]-\177]|\\[\001-011\013\014\016-\177])*"'
+            r')@(?:[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?\.)+[A-Z]{2,6}\.?$', re.IGNORECASE)
+
+        if all(field in self.data and not self.empty(field) for field in self.fields):
+            if len(self.data['first_name']) > 35:
+                self.__error__("First name is too long")
+            if len(self.data['last_name']) > 35:
+                self.__error__("Last name is too long")
+            if email_re.match(self.data['email']) is None:
+                self.__error__("Email is an incorrect format")
+            if len(self.data['phone_number']) > 16:
+                self.__error__("Phone number is too long")
+            if len(self.data['postcode']) > 4:
+                self.__error__("Postcode is too long")
+            if len(self.data['suburb']) > 32:
+                self.__error__("Suburb is too long")
+            if type(self.data['mailing_list']) is not bool:
+                self.__error__("Invalid form data")
+            for opt in self.data['volunteer_preferences']:
+                if self.volunteer_options.filter(name=opt).count == 0:
+                    self.__error__("Volunteer option is not valid")
+        else:
+            self.__error__("Missing form fields")
 
     def __error__(self, message=None):
         self.valid = False

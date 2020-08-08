@@ -16,13 +16,15 @@
             </div>
                 <div class="card-body">
                     <div class="row">
+                    <form id="editMemberForm" method="POST" action="{% url 'view_member' member_id=member.pk %}">
+                    {% csrf_token %}
                         <div class="col">
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label for="first_name">First name</label>
                                     <input type="text" id="first_name"
                                            name="member[first_name]"
-                                           class="form-control name {% if hide %}no_validate{% endif %}"
+                                           class="form-control name"
                                            {% if form.data.first_name %}
                                                 value="{{ form.data.first_name }}"
                                             {% else %}
@@ -34,7 +36,7 @@
                                     <label for="last_name">Last name</label>
                                     <input type="text" id="last_name"
                                            name="member[last_name]"
-                                           class="form-control name {% if hide %}no_validate{% endif %}"
+                                           class="form-control name"
                                            {% if form.data.last_name %}
                                                 value="{{ form.data.last_name }}"
                                             {% else %}
@@ -51,7 +53,7 @@
                                         <input type="text" id="phone_number"
                                                name="member[phone_number]"
                                                placeholder="444 444 444"
-                                               class="form-control phone_number {% if hide %}no_validate{% endif %}"
+                                               class="form-control phone_number"
                                                {% if form.data.phone_number %}
                                                 value="{{ form.data.phone_number }}"
                                                {% else %}
@@ -66,7 +68,7 @@
                                 <div class="col-md-2 mb-3">
                                     <label for="postcode">Postcode</label>
                                     <input type="text"
-                                           class="form-control postcode {% if hide %}no_validate{% endif %}"
+                                           class="form-control postcode"
                                            name="member[postcode]"
                                            id="postcode"
                                            {% if form.data.postcode %}
@@ -79,13 +81,13 @@
                                 </div>
                                 <div class="col-md-4 mb-3 pl-0">
                                     <label for="suburb">Suburb</label>
-                                    <select class="form-control suburb {% if hide %}no_validate{% endif %}"
+                                    <select class="form-control suburb"
                                             name="member[suburb]" id="suburb">
                                     </select>
                                 </div>
                                 <div class="col-md-6 mb-3 pl-0">
                                     <label for="email">Email</label>
-                                    <input type="email" class="form-control email {% if hide %}no_validate{% endif %}"
+                                    <input type="email" class="form-control email"
                                            name="member[email]"
                                            id="email"
                                             {% if form.data.email %}
@@ -100,9 +102,13 @@
                                 <div class="col">
                                     <div class="custom-control custom-checkbox">
                                         <input type="checkbox"
-                                               class="custom-control-input {% if hide %}no_validate{% endif %}"
+                                               class="custom-control-input"
                                                id="mailing_list"
-                                               name="member[mailing_list]">
+                                               name="member[mailing_list]"
+                                                {% if member.mailing_list %}
+                                                checked
+                                               {% endif %}
+                                        >
                                         <label class="custom-control-label"
                                                for="mailing_list">
                                             {{ new_member.mailing_list_text|safe }}
@@ -124,7 +130,13 @@
                                     </select>
                                 </div>
                             </div>
+                        <div class="row mt-3">
+                                    <div class="col d-flex justify-content-center">
+                                        <button class="btn btn-success" type="submit">Submit</button>
+                                    </div>
+                    </div>
                         </div>
+                     </form>
                     </div>
                 </div>
             </div>
@@ -230,7 +242,7 @@
             }
         });
 
-        $("#newMemberForm").validate({
+        $("#editMemberForm").validate({
             ignore: '.no_validate, input[type=select-multiple]',
             validClass: 'is-valid',
             errorClass: 'is-invalid'

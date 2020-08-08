@@ -89,9 +89,9 @@
                                             </div>
                                         </fieldset>
                                         {{ new_member.mid_help_text | safe }}
-                                    <!--
-                                        TODO: need to make sure that invalid form reloads data for each form
-                                    -->
+                                        <!--
+                                            TODO: need to make sure that invalid form reloads data for each form
+                                        -->
                                         {% include "includes/member/form_details.html" with index="1" hide=True %}
                                         {% include "includes/member/form_details.html" with index="2" hide=True %}
                                         {% include "includes/member/form_details.html" with index="3" hide=True %}

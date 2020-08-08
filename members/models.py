@@ -69,7 +69,6 @@ class Membership(models.Model):
         else:
             return False
 
-
 class Member(models.Model):
     membership = models.ForeignKey(Membership, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=35)
@@ -83,6 +82,12 @@ class Member(models.Model):
 
     def __str__(self):
         return self.email
+
+    @staticmethod
+    def get_form_fields():
+        #return [getattr(field, field.name) for field in Member._meta.get_fields()].remove("membership")
+        return ["first_name", "last_name", "email", "phone_number",
+                "postcode", "suburb", "mailing_list", "volunteer_preferences"]
 
 
 class Shift(models.Model):
@@ -101,7 +106,6 @@ class Shift(models.Model):
         membership.save()
 
 
-# Todo: remove code and just use name
 class VolunteerOption(models.Model):
     name = models.CharField(max_length=32)
     info = models.TextField(blank=True, null=True)
