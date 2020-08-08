@@ -21,7 +21,7 @@
                         <input type="text" id="last_name_{{ index }}"
                                name="member[{{ index }}][last_name]"
                                class="form-control name {% if hide %}no_validate{% endif %}"
-                               {% if form.data.first_name %}value="{{ form.data.first_name }}"{% endif %}
+                               {% if form.data.last_name %}value="{{ form.data.last_name }}"{% endif %}
                                
                         />
                     </div>
@@ -62,7 +62,8 @@
                         <label for="email_{{ index }}">Email</label>
                         <input type="email" class="form-control email {% if hide %}no_validate{% endif %}"
                                name="member[{{ index }}][email]"
-                                id="email_{{ index }}"/>
+                                id="email_{{ index }}"
+                        />
                     </div>
                 </div>
 

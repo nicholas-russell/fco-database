@@ -79,7 +79,7 @@ class Member(models.Model):
     postcode = models.CharField(max_length=4, null=True, blank=True)
     suburb = models.CharField(max_length=32, null=True, blank=True)
     mailing_list = models.BooleanField(default=True)
-    volunteer_preferences = ArrayField(models.CharField(max_length=3), null=True, blank=True)
+    volunteer_preferences = ArrayField(models.CharField(max_length=32), null=True, blank=True)
 
     def __str__(self):
         return self.email
@@ -103,6 +103,5 @@ class Shift(models.Model):
 
 # Todo: remove code and just use name
 class VolunteerOption(models.Model):
-    code = models.CharField(max_length=3)
     name = models.CharField(max_length=32)
     info = models.TextField(blank=True, null=True)

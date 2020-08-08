@@ -2,7 +2,246 @@
 
 {% load i18n %}
 {% load widget_tweaks %}
+{% load static %}
+{% block meta %}
+    <link rel="stylesheet" href="{% static "css/selectize.bootstrap4.css" %}" type="text/css"/>
 
+{% endblock %}
 {% block content %}
+    <div class="row justify-content-center">
+        <div class="col-8">
+            <div class="card">
+            <div class="card-header">
+                Edit Member
+            </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="first_name">First name</label>
+                                    <input type="text" id="first_name"
+                                           name="member[first_name]"
+                                           class="form-control name {% if hide %}no_validate{% endif %}"
+                                           {% if form.data.first_name %}
+                                                value="{{ form.data.first_name }}"
+                                            {% else %}
+                                                value="{{ member.first_name }}"
+                                            {% endif %}
+                                    />
+                                </div>
+                                <div class="col-md-4 mb-3 pl-0">
+                                    <label for="last_name">Last name</label>
+                                    <input type="text" id="last_name"
+                                           name="member[last_name]"
+                                           class="form-control name {% if hide %}no_validate{% endif %}"
+                                           {% if form.data.last_name %}
+                                                value="{{ form.data.last_name }}"
+                                            {% else %}
+                                                value="{{ member.last_name }}"
+                                            {% endif %}
+                                    />
+                                </div>
+                                <div class="col-md-4 mb-3 pl-0">
+                                    <label for="phone_number">Phone Number</label>
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">+61</span>
+                                        </div>
+                                        <input type="text" id="phone_number"
+                                               name="member[phone_number]"
+                                               placeholder="444 444 444"
+                                               class="form-control phone_number {% if hide %}no_validate{% endif %}"
+                                               {% if form.data.phone_number %}
+                                                value="{{ form.data.phone_number }}"
+                                               {% else %}
+                                                value="{{ member.phone_number }}"
+                                               {% endif %}
 
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2 mb-3">
+                                    <label for="postcode">Postcode</label>
+                                    <input type="text"
+                                           class="form-control postcode {% if hide %}no_validate{% endif %}"
+                                           name="member[postcode]"
+                                           id="postcode"
+                                           {% if form.data.postcode %}
+                                            value="{{ form.data.postcode }}"
+                                           {% else %}
+                                            value="{{ member.postcode }}"
+                                           {% endif %}
+
+                                    />
+                                </div>
+                                <div class="col-md-4 mb-3 pl-0">
+                                    <label for="suburb">Suburb</label>
+                                    <select class="form-control suburb {% if hide %}no_validate{% endif %}"
+                                            name="member[suburb]" id="suburb">
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3 pl-0">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control email {% if hide %}no_validate{% endif %}"
+                                           name="member[email]"
+                                           id="email"
+                                            {% if form.data.email %}
+                                            value="{{ form.data.email }}"
+                                           {% else %}
+                                            value="{{ member.email }}"
+                                           {% endif %}/>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox"
+                                               class="custom-control-input {% if hide %}no_validate{% endif %}"
+                                               id="mailing_list"
+                                               name="member[mailing_list]">
+                                        <label class="custom-control-label"
+                                               for="mailing_list">
+                                            {{ new_member.mailing_list_text|safe }}
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col">
+                                    <label for="volunteer_preferences">
+                                        {{ new_member.volunteer_text }}
+                                    </label>
+                                    <select name="member[volunteer_preferences]" multiple
+                                            id="volunteer_preferences"
+                                            class="volunteer_input">
+                                        {% for opt in volunteer_options %}
+                                            <option>{{ opt.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_body %}
+    <script src="{% static "js/selectize.min.js" %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.1/dist/jquery.validate.min.js"></script>
+    <script>
+        (function ($, window) {
+            $.fn.replaceOptions = function (options) {
+                var self, $option;
+
+                this.empty();
+                self = this;
+
+                $.each(options, function (index, option) {
+                    $option = $("<option></option>")
+                        .attr("value", option.value)
+                        .text(option.text);
+                    self.append($option);
+                });
+            };
+        })(jQuery, window);
+    </script>
+    <script>
+        // adds volunteer options to selectize
+        var volunteer_selectize = $('.volunteer_input').selectize();
+        {% if form.data.volunteer_preferences %}
+            console.log("true");
+            {% for volunteer_option in form.data.volunteer_preferences %}
+                volunteer_selectize[0].selectize.addItem("{{volunteer_option}}");
+            {% endfor %}
+        {% else %}
+            console.log("false");
+            {% for volunteer_option in member.volunteer_preferences %}
+                console.log("{{ volunteer_option }}")
+                volunteer_selectize[0].selectize.addItem("{{volunteer_option}}");
+            {% endfor %}
+        {% endif %}
+
+
+        // Handles post code search
+        $('.postcode').on('input', (e) => {
+            let s = $('#suburb');
+            s.replaceOptions([]);
+            let postcode = $(e.target).val();
+            if (postcode.length === 4 && postcode?.match(/[0-9]{4}/g)) {
+                console.log(postcode)
+                $.ajax({
+                    url: "/api/postcode/" + postcode,
+                    type: "GET",
+                    success: function (res) {
+                        var options = [];
+                        for (i = 0; i < res.length; i++) {
+                            options.push({
+                                text: res[i].name + " " + res[i].state.abbreviation,
+                                value: res[i].name
+                            })
+                        }
+                        s.replaceOptions(options);
+                    },
+                    error: function (err) {
+                        console.log("error");
+                        console.log(err);
+                    }
+                });
+            }
+        });
+
+        $.validator.addMethod(
+            "regex",
+            function (value, element, regexp) {
+                var re = new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            },
+            "Please check your input."
+        );
+
+        $.validator.addClassRules({
+            name: {
+                required: true,
+                maxlength: 35,
+            },
+            phone_number: {
+                required: true,
+                regex: "^0?([0-9]{3})[ .-]?\\2([0-9]{3})[ .-]?\\3([0-9]{3})$"
+            },
+            postcode: {
+                required: true,
+                digits: true,
+                minlength: 4,
+                maxlength: 4,
+            },
+            suburb: {
+                required: true
+            },
+            email: {
+                required: true,
+                email: true
+            }
+        });
+
+        $("#newMemberForm").validate({
+            ignore: '.no_validate, input[type=select-multiple]',
+            validClass: 'is-valid',
+            errorClass: 'is-invalid'
+        });
+
+        $(document).ready(function() {
+            $('#suburb').replaceOptions([{
+                    value: "{{ member.suburb|safe }}",
+                    text: "{{ member.suburb|safe}}"
+                }]);
+
+        });
+    </script>
 {% endblock %}

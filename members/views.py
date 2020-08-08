@@ -3,13 +3,13 @@ from django.contrib.auth.decorators import login_required
 from django.http import response
 from django.views import generic
 from . import models
-from .forms import is_membership_form_valid, is_member_form_valid, MembershipForm
-from django.views.decorators.cache import never_cache
+from .forms import MembershipForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db import IntegrityError
 import requests
 from querystring_parser import parser
+from django.core.exceptions import PermissionDenied
 
 
 @login_required
@@ -116,7 +116,7 @@ class ViewMembership(LoginRequiredMixin, generic.View):
             try:
                 membership = models.Membership.objects.get(pk=member_id)
             except models.Membership.DoesNotExist:
-                return response.Http404(models.Membership.DoesNotExist)
+                raise response.Http404
 
         members = models.Member.objects.filter(membership=membership)
         # TODO: add payments model here
@@ -135,7 +135,24 @@ class ViewMembership(LoginRequiredMixin, generic.View):
 
 class ViewMember(LoginRequiredMixin, generic.View):
     def get(self, request, member_id):
-        pass
+        try:
+            member = models.Member.objects.get(pk=member_id)
+        except models.Member.DoesNotExist:
+            raise response.Http404
+
+        try:
+            membership = models.Membership.objects.get(user=request.user)
+        except models.Membership.DoesNotExist:
+            raise response.Http404
+
+        if member.membership != membership:
+            raise PermissionDenied
+        else:
+            context = {
+                'volunteer_options': models.VolunteerOption.objects.all(),
+                'member': member
+            }
+            return render(request, "member/view_member.html", context)
 
     def post(self, request, member_id):
         pass

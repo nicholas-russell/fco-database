@@ -10,8 +10,8 @@
 
 {% endblock %}
 {% block content %}
-    <div class="row">
-        <div class="col-lg-8 offset-lg-2">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
             <div class="card">
                 <div class="card-header text-center">
                     <h4 class="mb-0">Application for Membership</h4>
@@ -89,6 +89,9 @@
                                             </div>
                                         </fieldset>
                                         {{ new_member.mid_help_text | safe }}
+                                    <!--
+                                        TODO: need to make sure that invalid form reloads data for each form
+                                    -->
                                         {% include "includes/member/form_details.html" with index="1" hide=True %}
                                         {% include "includes/member/form_details.html" with index="2" hide=True %}
                                         {% include "includes/member/form_details.html" with index="3" hide=True %}

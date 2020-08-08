@@ -26,7 +26,7 @@ class ShiftAdmin(admin.ModelAdmin):
 
 @admin.register(models.VolunteerOption)
 class VolunteerOptionAdmin(admin.ModelAdmin):
-    list_display = ("code", "name", "info")
+    list_display = ("name", "info")
 
 
 @admin.register(models.MembershipType)
