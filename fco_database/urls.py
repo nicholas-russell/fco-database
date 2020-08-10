@@ -10,6 +10,7 @@ urlpatterns = [
     path('membership/', members_views.ViewMembership.as_view(), name='view_membership'),
     path('membership/<int:member_id>', members_views.ViewMembership.as_view(), name='view_membership_admin'),
     path('member/<int:member_id>', members_views.ViewMember.as_view(), name='view_member'),
+    path('member/new', members_views.NewMember.as_view(), name='new_member'),
     path('membership/new/', members_views.NewMembership.as_view(), name='new_membership'),
     path('api/postcode/<str:post_code>/', members_views.postcode, name='postcode')
 ]

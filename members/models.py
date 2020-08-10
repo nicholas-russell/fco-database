@@ -56,6 +56,10 @@ class Membership(models.Model):
         else:
             return self.working_expiry >= date.today()
 
+    @staticmethod
+    def get_membership_from_user(user):
+        return Membership.objects.get(user=user)
+
     @property
     def can_add_member(self):
         members_count = Member.objects.filter(membership=self).count()
@@ -80,6 +84,7 @@ class Member(models.Model):
     suburb = models.CharField(max_length=32, null=True, blank=True)
     mailing_list = models.BooleanField(default=True)
     volunteer_preferences = ArrayField(models.CharField(max_length=32), null=True, blank=True)
+    active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.email

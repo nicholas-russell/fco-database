@@ -160,7 +160,7 @@ class ViewMember(LoginRequiredMixin, generic.View):
 
         if not form.valid:
             print(form.errors)
-            messages.error(request, "There was an error in the form - please try again")
+            messages.error(request, "There was an error in the form. Please try again")
             return self.get(request, member_id, form)
 
         membership = models.Membership.objects.get(user=request.user)
@@ -185,8 +185,38 @@ class ViewMember(LoginRequiredMixin, generic.View):
 
 
 class NewMember(LoginRequiredMixin, generic.View):
-    def get(self, request, form):
-        pass
+    def get(self, request, form=None):
+        membership = models.Membership.get_membership_from_user(request.user)
+        if not membership.can_add_member:
+            messages.info(request, "You have the maximum number of members on your membership")
+            return redirect("view_membership")
 
-    def post(self, request, form):
-        pass
+        context = {
+            'volunteer_options': models.VolunteerOption.objects.all(),
+            'form': form
+        }
+        return render(request, "member/new_member.html", context)
+
+    def post(self, request, form=None):
+        form = MemberForm(parser.parse(request.POST.urlencode()))
+
+        if not form.valid:
+            messages.error(request, "There was an error in the form. Please try again")
+            return self.get(request, form)
+
+        membership = models.Membership.get_membership_from_user(request.user)
+        if not membership.can_add_member:
+            messages.info(request, "You have the maximum number of members on your membership")
+            return redirect("view_membership")
+
+        new_member = models.Member.objects.create(**form.data, membership=membership)
+        try:
+            new_member.save()
+        except RuntimeError:
+            messages.error(request, "There was an error in the form. Please try again later")
+            return self.get(request, form)
+        except IntegrityError:
+            messages.error(request, "There was an error in the form. Please try again later")
+            return self.get(request, form)
+
+        return redirect("view_membership")
