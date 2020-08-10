@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import response
 from django.views import generic
 from . import models
-from .forms import MembershipForm
+from .forms import MembershipForm, MemberForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.db import IntegrityError
@@ -134,7 +134,7 @@ class ViewMembership(LoginRequiredMixin, generic.View):
 
 
 class ViewMember(LoginRequiredMixin, generic.View):
-    def get(self, request, member_id):
+    def get(self, request, member_id, form=None):
         try:
             member = models.Member.objects.get(pk=member_id)
         except models.Member.DoesNotExist:
@@ -150,12 +150,38 @@ class ViewMember(LoginRequiredMixin, generic.View):
         else:
             context = {
                 'volunteer_options': models.VolunteerOption.objects.all(),
-                'member': member
+                'member': member,
+                'form': form
             }
             return render(request, "member/view_member.html", context)
 
     def post(self, request, member_id):
-        pass
+        form = MemberForm(parser.parse(request.POST.urlencode()))
+
+        if not form.valid:
+            print(form.errors)
+            messages.error(request, "There was an error in the form - please try again")
+            return self.get(request, member_id, form)
+
+        membership = models.Membership.objects.get(user=request.user)
+        member = models.Member.objects.get(pk=member_id)
+
+        if member.membership.pk is not membership.pk:
+            raise PermissionDenied
+
+        for key, value in form.data.items():
+            setattr(member, key, value)
+
+        try:
+            member.save()
+        except RuntimeError:
+            messages.error(request, "There was an error in the form. Please try again later")
+            return self.get(request, member_id, form)
+        except IntegrityError:
+            messages.error(request, "There was an error in the form. Please try again later")
+            return self.get(request, member_id, form)
+
+        return redirect("view_membership")
 
 
 class NewMember(LoginRequiredMixin, generic.View):

@@ -69,6 +69,7 @@ class Membership(models.Model):
         else:
             return False
 
+
 class Member(models.Model):
     membership = models.ForeignKey(Membership, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=35)

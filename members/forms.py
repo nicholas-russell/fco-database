@@ -66,7 +66,7 @@ class MembershipForm:
     def validate_members(self):
         volunteer_options = VolunteerOption.objects.all()
         for i, member in enumerate(self.members):
-            member_form = MemberForm(member, volunteer_options)
+            member_form = MemberForm({'member': member}, volunteer_options)
             if not member_form.valid:
                 self.__error__("Missing form fields")
 
@@ -94,14 +94,27 @@ class MembershipForm:
 
 class MemberForm:
 
-    def __init__(self, data, volunteer_options):
+    def __init__(self, data, volunteer_options=None):
         self.valid = True
         self.errors = []
 
         self.fields = Member.get_form_fields()
-        
-        self.volunteer_options = volunteer_options
-        self.data = data
+
+        if volunteer_options is None:
+            self.volunteer_options = VolunteerOption.objects.all()
+        else:
+            self.volunteer_options = volunteer_options
+        self.data = data['member']
+
+        if 'volunteer_preferences' not in self.data:
+            self.data['volunteer_preferences'] = []
+        elif type(self.data['volunteer_preferences']) == str:
+            self.data['volunteer_preferences'] = [self.data['volunteer_preferences']]
+        if 'mailing_list' not in self.data:
+            self.data['mailing_list'] = True
+        else:
+            self.data['mailing_list'] = False
+            self.data['phone_number'] = self.data['phone_number'].replace(" ", "")
         self.validate()
 
     def validate(self):
